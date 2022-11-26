@@ -28,8 +28,8 @@ public class HotelServer {
     }
 
     /**
-     * Starts the server
-     * @throws Exception throws exception if access failed
+     * Starts the jetty server
+     * @throws Exception if access failed
      */
     public void start() throws Exception {
         Server server = new Server(PORT); // jetty server
@@ -62,17 +62,32 @@ public class HotelServer {
         argParser.addValidArg("-threads");
 
         // exit program if user arguments are invalid
-        if (!argParser.addUserArguments(args)) {
-            System.exit(0);
-        }
+        if (!argParser.addUserArguments(args)) System.exit(0);
 
         // grab file paths and thread counts from the user arguments
         String hotelPath = argParser.getArgValue("-hotels");
         String reviewsPath = argParser.getArgValue("-reviews");
         int threads = argParser.getArgValue("-threads") == null ? 1 : Integer.parseInt(argParser.getArgValue("-threads"));
 
+        // create travel database tables
+        HotelDB hotelDB = new HotelDB("database.properties");
+        hotelDB.createTable("travel_users");
+        hotelDB.createTable("travel_hotels");
+        hotelDB.createTable("travel_reviews");
+
+        // load hotel data if specified
+        if (argParser.getArgValue("-hotels") != null) {
+            HotelParser hotelParser = new HotelParser(hotelDB);
+            hotelParser.addHotels(hotelPath);
+        }
+
+        // load review data if specified
+        if (argParser.getArgValue("-reviews") != null) {
+            ReviewParser reviewParser = new ReviewParser(hotelDB, threads);
+            reviewParser.addReviews(reviewsPath);
+        }
+
         // create and set up jetty server
-        HotelDB hotelDB = new HotelDB();
         HotelServer hotelServer = new HotelServer(hotelDB);
         hotelServer.addServletMapping("/registration", RegistrationServlet.class.getName());
         hotelServer.addServletMapping("/login", LoginServlet.class.getName());
