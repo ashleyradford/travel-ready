@@ -1,5 +1,6 @@
-package hotelapp;
+package server;
 
+import hotelapp.HotelDB;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -23,10 +24,16 @@ public class RegistrationServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
 
+        // check if user was redirected here because of an error
+        String error = request.getParameter("error");
+        error = StringEscapeUtils.escapeHtml4(error);
+
+        // set up velocity template
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
         Template template = ve.getTemplate("templates/registration.html");
+        context.put("error", error);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
@@ -46,8 +53,19 @@ public class RegistrationServlet extends HttpServlet {
         String password = request.getParameter("pass");
         password = StringEscapeUtils.escapeHtml4(password);
 
-        if (true) {
-            response.sendRedirect("/login");
+        // check if username and password are valid
+        if (username.matches("[a-zA-Z][a-zA-Z0-9_]{2,16}")
+                && password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%&]).{8,20}")) {
+            // check if username is available
+            HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
+            if (hotelDB.checkUsernameAvailability(username)) {
+                hotelDB.addUser(username, password);
+                response.sendRedirect("/login");
+            } else {
+                response.sendRedirect("/registration?error=dup");
+            }
+        } else {
+            response.sendRedirect("/registration?error=failed");
         }
     }
 }

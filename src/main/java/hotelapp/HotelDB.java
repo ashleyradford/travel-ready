@@ -237,4 +237,42 @@ public class HotelDB {
         }
         return false;
     }
+
+    public boolean authenticateUser(String username, String password) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.AUTHENTICATE_USER);
+            String usersalt = getSalt(connection, username);
+            String passhash = PasswordEncoder.getHash(password, usersalt);
+
+            statement.setString(1, username);
+            statement.setString(2, passhash);
+            ResultSet results = statement.executeQuery();
+            return results.next();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    /**
+     * Gets the salt for a specific user
+     * @param connection database connection
+     * @param user which user to retrieve salt for
+     * @return salt for the specified user or null if user does not exist
+     */
+    private String getSalt(Connection connection, String user) {
+        String salt = null;
+        try (PreparedStatement statement = connection.prepareStatement(PreparedStatements.SELECT_SALT)) {
+            statement.setString(1, user);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                salt = results.getString("usersalt");
+                return salt;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return salt;
+    }
 }

@@ -59,4 +59,12 @@ public class PreparedStatements {
     // select username from travel_users (for actual registration)
     public static final String SELECT_USERNAME =
             "SELECT username FROM travel_users WHERE username = ?";
+
+    // authenticates user
+    public static final String AUTHENTICATE_USER =
+            "SELECT username FROM travel_users WHERE username = ? AND password = ?";
+
+    // gets salt for user
+    public static final String SELECT_SALT =
+            "SELECT usersalt FROM travel_users WHERE username = ?";
 }

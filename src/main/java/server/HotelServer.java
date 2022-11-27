@@ -1,5 +1,9 @@
-package hotelapp;
+package server;
 
+import hotelapp.ArgParser;
+import hotelapp.HotelDB;
+import hotelapp.HotelParser;
+import hotelapp.ReviewParser;
 import org.apache.velocity.app.VelocityEngine;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;

@@ -5,6 +5,17 @@
     <title>Home</title>
 </head>
 <body>
-  <h2>Welcome home :)</h2>
+    #if ($username)
+    <h2>Welcome home, $username</h2>
+    <form method="get" action="/login">
+        <input hidden name="session" value="end"/>
+        <p><input type="submit" value="Logout"></p>
+    </form>
+    #else
+    <h2>Please login.</h2>
+    <form method="get" action="/login">
+        <p><input type="submit" value="Login"></p>
+    </form>
+    #end
 </body>
 </html>

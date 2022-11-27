@@ -72,8 +72,7 @@ public class ReviewParser {
         poolManager.shutdown();
         try {
             poolManager.awaitTermination(5, TimeUnit.SECONDS);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             System.out.println(e);
         }
     }
@@ -151,8 +150,8 @@ public class ReviewParser {
                 String hotelid = hotelObj.get("hotelId").getAsString();
                 String username = hotelObj.get("userNickname").getAsString();
                 String rating = hotelObj.get("ratingOverall").getAsString();
-                String title = hotelObj.get("title").getAsString();
-                String text = hotelObj.get("reviewText").getAsString();
+                String title = hotelObj.get("title").getAsString().trim();
+                String text = hotelObj.get("reviewText").getAsString().trim();
                 String submissionDate = hotelObj.get("reviewSubmissionTime").getAsString();
 
                 // only register user and add review if username is valid

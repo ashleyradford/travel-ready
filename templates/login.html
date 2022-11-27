@@ -5,6 +5,12 @@
     <title>Login</title>
 </head>
 <body>
+    #if ($auth == "pending")
+        <p>Please login below</p>
+    #elseif ($auth == "failed")
+        <p style="color:#FF0000">Invalid username or password, please try again.</p>
+    #end
+
     <form method="post" action="/login">
         Enter your username:<br><input type="text" name="name"><br>
         Enter your password:<br><input type="password" name="pass"><br>

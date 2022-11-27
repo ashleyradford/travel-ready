@@ -5,11 +5,74 @@
     <title>User Registration</title>
 </head>
 <body>
-    <!-- method, do we want to send data via POST or GET request,
+    <script>
+        function validateName(name) {
+            let str = name.value;
+            if (str.length < 3 || str.length > 16) {
+                alert('Username must be between 3 and 16 characters');
+                return;
+            }
+            let re1 = /^[a-zA-Z]/;
+            if (!re1.test(str)) {
+                alert('Username must start with a letter.');
+                return;
+            }
+            let re2 = /^[a-zA-Z][a-zA-Z0-9_]{2,16}$/;
+            if (!re2.test(str)) {
+                alert('Username can only contain letter, digit, or underscore characters.');
+                return;
+            }
+        }
+        function validatePassword(password) {
+            let str = password.value;
+            if (str.length < 8 || str.length > 20) {
+                alert('Password must be between 8 and 20 characters');
+                return;
+            }
+            let re1 = /[a-z]/;
+            if (!re1.test(str)) {
+                alert('Password must contain one lowercase letter');
+                return;
+            }
+            let re2 = /[A-Z]/;
+            if (!re2.test(str)) {
+                alert('Password must contain one uppercase letter');
+                return;
+            }
+            let re3 = /[0-9]/;
+            if (!re3.test(str)) {
+                alert('Password must contain one digit character');
+                return;
+            }
+            let re4 = /[!@#$%&]/;
+            if (!re4.test(str)) {
+                alert('Password must contain one special character');
+                return;
+            }
+        }
+   </script>
+
+    #if ($error == "dup")
+    <p style="color:#FF0000">Username is already in use, please select another.</p>
+    #elseif ($error == "failed")
+    <p style="color:#FF0000">Could not register user, please try again.</p>
+    #end
+
+   <!-- method, sending data via POST request,
     action, which servlet is responsible for processing form when it's submitted -->
     <form method="post" action="/registration">
-        Choose your username:<br><input type="text" name="name"><br>
-        Choose your password:<br><input type="password" name="pass"><br>
+        Choose your username:<br>
+            <input type="text"
+                   name="name"
+                   pattern="[a-zA-Z][a-zA-Z0-9_]{2,16}" required
+                   oninvalid="validateName(this);"
+                   oninput="setCustomValidity('')"><br>
+        Choose your password:<br>
+            <input type="password"
+                   name="pass"
+                   pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%&]).{8,20}" required
+                   oninvalid="validatePassword(this);"
+                   oninput="setCustomValidity('')">
         <p><input type="submit" value="Register"></p>
     </form>
 </body>
