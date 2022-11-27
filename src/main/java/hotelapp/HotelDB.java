@@ -2,12 +2,12 @@ package hotelapp;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
+/** MySQL database handler class for travel_users, travel_hotels, and travel_reviews tables */
 public class HotelDB {
     private final Properties config; // a map of properties
     private final String uri; // uri to connect to mysql using jdbc
@@ -36,22 +36,205 @@ public class HotelDB {
         return config;
     }
 
+    // ------------------------------------ SQL MODIFICATIONS ------------------------------------ //
+
     /**
      * Creates sql table if it does not already exist
      * @param table name of table
      */
     public void createTable(String table) {
         Statement statement;
-        try (Connection dbConnection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
-            statement = dbConnection.createStatement();
-            if (table.equals("travel_users"))
-                statement.executeUpdate(PreparedStatements.CREATE_USERS_TABLE);
-            else if (table.equals("travel_hotels"))
-                statement.executeUpdate(PreparedStatements.CREATE_HOTELS_TABLE);
-            else if (table.equals("travel_reviews"))
-                statement.executeUpdate(PreparedStatements.CREATE_REVIEWS_TABLE);
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.createStatement();
+            switch (table) {
+                case "travel_users":
+                    statement.executeUpdate(PreparedStatements.CREATE_USERS_TABLE);
+                    break;
+                case "travel_hotels":
+                    statement.executeUpdate(PreparedStatements.CREATE_HOTELS_TABLE);
+                    break;
+                case "travel_reviews":
+                    statement.executeUpdate(PreparedStatements.CREATE_REVIEWS_TABLE);
+                    break;
+            }
         } catch (SQLException e) {
-            System.out.println("Unable to connect to database: " + e);
+            System.out.println(e);
         }
+    }
+
+    /**
+     * Adds user to sql database after hashing the password
+     * @param username username
+     * @param password password
+     */
+    public void addUser(String username, String password) {
+        byte[] saltBytes = PasswordEncoder.generateSalt();
+        String userSalt = PasswordEncoder.encodeHex(saltBytes, 32);
+        String passHash = PasswordEncoder.getHash(password, userSalt);
+
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.INSERT_USER);
+            statement.setString(1, username);
+            statement.setString(2, passHash);
+            statement.setString(3, userSalt);
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new username: " + e);
+        }
+    }
+
+    /**
+     * Adds a set of usernames to sql database
+     * @param usernames set of usernames
+     */
+    public void addManyUsers(Set<String> usernames) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            int i = 1;
+            for (String username : usernames) {
+                // hash password
+                byte[] saltBytes = PasswordEncoder.generateSalt();
+                String userSalt = PasswordEncoder.encodeHex(saltBytes, 32);
+                String passHash = PasswordEncoder.getHash(username + "00" + i++ + "!", userSalt);
+
+                statement = connection.prepareStatement(PreparedStatements.INSERT_USER);
+                statement.setString(1, username);
+                statement.setString(2, passHash);
+                statement.setString(3, userSalt);
+                statement.executeUpdate();
+                statement.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new username: " + e);
+        }
+    }
+
+    /**
+     * Adds hotel to sql database
+     * @param hotelid hotel id
+     * @param name hotel name
+     * @param street hotel street
+     * @param city hotel city
+     * @param state hotel state
+     * @param latitude hotel lat
+     * @param longitude hotel long
+     */
+    public void addHotel(String hotelid, String name, String street, String city,
+                         String state, String latitude, String longitude) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.INSERT_HOTEL);
+            statement.setString(1, hotelid);
+            statement.setString(2, name);
+            statement.setString(3, street);
+            statement.setString(4, city);
+            statement.setString(5, state);
+            statement.setString(6, latitude);
+            statement.setString(7, longitude);
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new hotel: " + e);
+        }
+    }
+
+    /**
+     * Adds a list of hotels to sql database
+     * @param hotels list of hotels
+     */
+    public void addManyHotels(List<Hotel> hotels) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            for (Hotel h : hotels) {
+                statement = connection.prepareStatement(PreparedStatements.INSERT_HOTEL);
+                statement.setString(1, h.getHotelid());
+                statement.setString(2, h.getName());
+                statement.setString(3, h.getStreet());
+                statement.setString(4, h.getCity());
+                statement.setString(5, h.getState());
+                statement.setString(6, h.getLatitude());
+                statement.setString(7, h.getLongitude());
+                statement.executeUpdate();
+                statement.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new hotel: " + e);
+        }
+    }
+
+    /**
+     * Adds a review to sql database
+     * @param reviewid review id
+     * @param hotelid hotel id
+     * @param username nickname
+     * @param rating user rating
+     * @param title user title
+     * @param text user review
+     * @param submission_date user submission date
+     */
+    public void addReview(String reviewid, String hotelid, String username, String rating,
+                             String title, String text, String submission_date) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.INSERT_REVIEW);
+            statement.setString(1, reviewid);
+            statement.setString(2, hotelid);
+            statement.setString(3, username);
+            statement.setString(4, rating);
+            statement.setString(5, title);
+            statement.setString(6, text);
+            statement.setString(7, submission_date);
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new review: " + e);
+        }
+    }
+
+    /**
+     * Adds a list of reviews to sql database
+     * @param reviews list of reviews
+     */
+    public void addManyReviews(List<Review> reviews) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            for (Review r : reviews) {
+                statement = connection.prepareStatement(PreparedStatements.INSERT_REVIEW);
+                statement.setString(1, r.getReviewid());
+                statement.setString(2, r.getHotelid());
+                statement.setString(3, r.getUsername());
+                statement.setString(4, r.getRating());
+                statement.setString(5, r.getTitle());
+                statement.setString(6, r.getText());
+                statement.setString(7, r.getSubmissionDate().toString());
+                statement.executeUpdate();
+                statement.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new review: " + e);
+        }
+    }
+
+    // ------------------------------------ SQL QUERIES ------------------------------------ //
+
+    /**
+     * Checks if username is available
+     * @param username username to check
+     * @return true if available, false otherwise
+     */
+    public boolean checkUsernameAvailability(String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_USERNAME);
+            statement.setString(1, username);
+
+            ResultSet results = statement.executeQuery();
+            return !results.next();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
     }
 }
