@@ -6,7 +6,7 @@
 </head>
 <body>
     #if ($auth == "pending")
-        <p>Please login below</p>
+        <h3>Existing user login</h3>
     #elseif ($auth == "failed")
         <p style="color:#FF0000">Invalid username or password, please try again.</p>
     #end
@@ -15,6 +15,11 @@
         Enter your username:<br><input type="text" name="name" required><br>
         Enter your password:<br><input type="password" name="pass" required><br>
         <p><input type="submit" value="Enter"></p>
+    </form>
+
+    <p>Need to create an account?</p>
+    <form method="get" action="/registration">
+        <p><input type="submit" value="Register"></p>
     </form>
 </body>
 </html>

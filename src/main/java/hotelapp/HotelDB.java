@@ -282,18 +282,61 @@ public class HotelDB {
 
             ResultSet results = statement.executeQuery();
             if (results.next()) {
-                hotel = new Hotel(results.getString(1), // id
-                        results.getString(2), // name
-                        results.getString(3), // street
-                        results.getString(4), // city
-                        results.getString(5), // state
-                        results.getString(6), // lat
-                        results.getString(7)); // long
+                hotel = new Hotel(results.getString(1), // hotelid
+                        results.getString(2),   // name
+                        results.getString(3),   // street
+                        results.getString(4),   // city
+                        results.getString(5),   // state
+                        results.getString(6),   // lat
+                        results.getString(7));  // long
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
         return hotel;
+    }
+
+    public String getAvgRating(String name) {
+        PreparedStatement statement;
+        String avgRating = null;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_AVG_RATING);
+            statement.setString(1, name);
+
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                avgRating = results.getString(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return avgRating;
+    }
+
+    public List<Review> getHotelReviews(String name) {
+        PreparedStatement statement;
+        List<Review> reviews = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_REVIEWS);
+            statement.setString(1, name);
+
+            ResultSet results = statement.executeQuery();
+            // will still return a non-empty set if we are looking for a valid hotel,
+            // we will get an all null row since we are left joining onto the hotels
+            while (results.next() && results.getString(1) != null) {
+                Review review= new Review(results.getString(1), // reviewid
+                        results.getString(2),   // hotelid
+                        results.getString(3),   // username
+                        results.getString(4),   // rating
+                        results.getString(5),   // title
+                        results.getString(6),   // text
+                        results.getString(7));  // submission_date
+                reviews.add(review);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return reviews;
     }
 
     /**

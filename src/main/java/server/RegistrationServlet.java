@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,6 +24,14 @@ public class RegistrationServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
+
+        // grab session data
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+
+        // user must log out first before they can log in again
+        if (username != null)
+            response.sendRedirect("/home");
 
         // check if user was redirected here because of an error
         String error = request.getParameter("error");

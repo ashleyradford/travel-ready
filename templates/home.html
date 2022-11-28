@@ -18,9 +18,8 @@
     </form>
 
     <p></p>
-
     #if ($matchedHotels)
-        #foreach($hotel in $matchedHotels)
+        #foreach ($hotel in $matchedHotels)
             <form method="get" action="/info">
                 <input type="hidden" name="hotelName" value="$hotel">
                 <button type="submit">
@@ -31,9 +30,12 @@
     #end
 
     #else
-    <h2>Please login.</h2>
+    <h3>Please login or create new account.</h3>
     <form method="get" action="/login">
         <p><input type="submit" value="Login"></p>
+    </form>
+    <form method="get" action="/registration">
+        <p><input type="submit" value="Register"></p>
     </form>
     #end
 </body>

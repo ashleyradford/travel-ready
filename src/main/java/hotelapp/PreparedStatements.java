@@ -78,12 +78,21 @@ public class PreparedStatements {
                     "FROM travel_hotels WHERE name = ?";
 
     public static final String SELECT_AVG_RATING =
-            "SELECT hotelid, AVG(rating) AS avg_rating FROM travel_reviews GROUP BY hotelid";
+            "SELECT AVG(rating) AS avg_rating " +
+                    "FROM travel_hotels " +
+                    "LEFT JOIN travel_reviews " +
+                    "ON travel_reviews.hotelid = travel_hotels.hotelid " +
+                    "GROUP BY travel_hotels.name " +
+                    "HAVING name = ?;";
 
     // select all review data for a given hotel name
     public static final String SELECT_HOTEL_REVIEWS =
-            "SELECT travel_reviews.* FROM travel_hotels " +
+            "SELECT travel_reviews.reviewid, travel_reviews.hotelid, travel_reviews.username, " +
+                    "travel_reviews.rating, travel_reviews.title, travel_reviews.text, " +
+                    "travel_reviews.submission_date " +
+                    "FROM travel_hotels " +
                     "LEFT JOIN travel_reviews " +
                     "ON travel_reviews.hotelid = travel_hotels.hotelid " +
-                    "WHERE travel_hotels.name = ?";
+                    "WHERE travel_hotels.name = ? " +
+                    "ORDER BY travel_reviews.submission_date DESC";
 }

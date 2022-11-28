@@ -2,6 +2,7 @@ package server;
 
 import hotelapp.Hotel;
 import hotelapp.HotelDB;
+import hotelapp.Review;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -11,9 +12,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 public class InfoServlet extends HttpServlet {
 
@@ -25,6 +28,10 @@ public class InfoServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
 
+        // grab session data
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+
         // hotel search if applicable
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
@@ -33,13 +40,22 @@ public class InfoServlet extends HttpServlet {
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         Hotel hotel = hotelDB.getHotel(hotelName);
 
+        // get avg rating
+        String avgRating = hotelDB.getAvgRating(hotelName);
+
+        // get list of reviews
+        List<Review> reviewList = hotelDB.getHotelReviews(hotelName);
+
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
         Template template = ve.getTemplate("templates/info.html");
+        context.put("username", username);
         context.put("hotelName", hotelName);
         context.put("hotel", hotel);
+        context.put("avgRating", avgRating);
+        context.put("reviewList", reviewList);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);

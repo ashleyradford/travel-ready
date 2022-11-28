@@ -5,9 +5,37 @@
     <title>$hotelName</title>
 </head>
 <body>
-
+    #if ($username)
     <p>$hotel.getName() ~ $hotel.getHotelid()</p>
     <p>$hotel.getStreet(), $hotel.getCity(), $hotel.getState()</p>
 
+    #if ($avgRating)
+        <p>Average Rating: $avgRating</p>
+    #else
+        <p>Average Rating: N/A</p>
+    #end
+
+    <p><a href="https://www.expedia.com/" target="_blank" rel="noopener noreferrer">$hotelName</a></p>
+
+    #if ($reviewList.size() > 0)
+        #foreach ($review in $reviewList)
+            <br><p>Rating: $review.getRating()</p>
+            <p>Title: $review.getTitle()</p>
+            <p>By: $review.getUsername() on $review.getSubmissionDate()</p>
+            <p>$review.getText()</p>
+        #end
+    #else
+        <p>No reviews yet. Want to add one?</p>
+    #end
+
+    #else
+    <h3>Please login or create new account.</h3>
+    <form method="get" action="/login">
+        <p><input type="submit" value="Login"></p>
+    </form>
+    <form method="get" action="/registration">
+        <p><input type="submit" value="Register"></p>
+    </form>
+    #end
 </body>
 </html>

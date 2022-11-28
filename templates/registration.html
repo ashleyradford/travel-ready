@@ -23,6 +23,7 @@
                 return;
             }
         }
+
         function validatePassword(password) {
             let str = password.value;
             if (str.length < 8 || str.length > 20) {
@@ -58,7 +59,9 @@
     <p style="color:#FF0000">Could not register user, please try again.</p>
     #end
 
-   <!-- method, sending data via POST request,
+    <h3>New user registration</h3>
+
+    <!-- method, sending data via POST request,
     action, which servlet is responsible for processing form when it's submitted -->
     <form method="post" action="/registration">
         Choose your username:<br>
@@ -74,6 +77,11 @@
                    oninvalid="validatePassword(this);"
                    oninput="setCustomValidity('')">
         <p><input type="submit" value="Register"></p>
+    </form>
+
+    <p>Already have an account?</p>
+    <form method="get" action="/login">
+        <p><input type="submit" value="Login"></p>
     </form>
 </body>
 </html>

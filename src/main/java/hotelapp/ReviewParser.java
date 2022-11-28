@@ -13,6 +13,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -152,12 +154,16 @@ public class ReviewParser {
                 String rating = hotelObj.get("ratingOverall").getAsString();
                 String title = hotelObj.get("title").getAsString().trim();
                 String text = hotelObj.get("reviewText").getAsString().trim();
-                String submissionDate = hotelObj.get("reviewSubmissionTime").getAsString();
+                String dateStr = hotelObj.get("reviewSubmissionTime").getAsString();
+
+                // convert String submissionDate to a LocalDateTime
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+                LocalDateTime submissionDate = LocalDateTime.parse(dateStr, formatter);
 
                 // only register user and add review if username is valid
                 if (username.matches("[a-zA-Z0-9_]{3,16}")) {
                     users.add(username);
-                    Review review = new Review(reviewid, hotelid, username, rating, title, text, submissionDate);
+                    Review review = new Review(reviewid, hotelid, username, rating, title, text, submissionDate.toString());
                     reviews.add(review);
                 }
             }

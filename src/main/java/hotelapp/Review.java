@@ -1,8 +1,5 @@
 package hotelapp;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /** Holds review data */
 public class Review {
     private final String reviewid;
@@ -11,7 +8,7 @@ public class Review {
     private final String rating;
     private final String title;
     private final String text;
-    private final LocalDateTime submissionDate;
+    private final String submissionDate;
 
     /**
      * Constructor for Review class
@@ -30,10 +27,7 @@ public class Review {
         this.rating = rating;
         this.title = title;
         this.text = text;
-
-        // convert String submissionDate to a LocalDateTime
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        this.submissionDate = LocalDateTime.parse(submissionDate, formatter);
+        this.submissionDate = submissionDate;
     }
 
     public String getReviewid() {
@@ -60,7 +54,7 @@ public class Review {
         return text;
     }
 
-    public LocalDateTime getSubmissionDate() {
+    public String getSubmissionDate() {
         return submissionDate;
     }
 }
