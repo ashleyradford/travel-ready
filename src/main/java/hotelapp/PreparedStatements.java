@@ -60,11 +60,30 @@ public class PreparedStatements {
     public static final String SELECT_USERNAME =
             "SELECT username FROM travel_users WHERE username = ?";
 
-    // authenticates user
+    // authenticates user from travel_users
     public static final String AUTHENTICATE_USER =
             "SELECT username FROM travel_users WHERE username = ? AND password = ?";
 
-    // gets salt for user
+    // select a user's salt from travel_users
     public static final String SELECT_SALT =
             "SELECT usersalt FROM travel_users WHERE username = ?";
+
+    // select hotel name from travel_hotel using regex
+    public static final String SELECT_HOTEL =
+            "SELECT name FROM travel_hotels WHERE name LIKE ?";
+
+    // select hotel data for a given hotel name
+    public static final String SELECT_HOTEL_DATA =
+            "SELECT hotelid, name, street, city, state, latitude, longitude " +
+                    "FROM travel_hotels WHERE name = ?";
+
+    public static final String SELECT_AVG_RATING =
+            "SELECT hotelid, AVG(rating) AS avg_rating FROM travel_reviews GROUP BY hotelid";
+
+    // select all review data for a given hotel name
+    public static final String SELECT_HOTEL_REVIEWS =
+            "SELECT travel_reviews.* FROM travel_hotels " +
+                    "LEFT JOIN travel_reviews " +
+                    "ON travel_reviews.hotelid = travel_hotels.hotelid " +
+                    "WHERE travel_hotels.name = ?";
 }

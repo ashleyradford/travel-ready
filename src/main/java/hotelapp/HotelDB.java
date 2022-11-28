@@ -3,6 +3,7 @@ package hotelapp;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -253,6 +254,46 @@ public class HotelDB {
             System.out.println(e);
         }
         return false;
+    }
+
+    public List<String> findHotels(String name) {
+        PreparedStatement statement;
+        List<String> hotels = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL);
+            statement.setString(1, "%" + name + "%");
+
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                hotels.add(results.getString(1));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return hotels;
+    }
+
+    public Hotel getHotel(String name) {
+        PreparedStatement statement;
+        Hotel hotel = null;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_DATA);
+            statement.setString(1, name);
+
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                hotel = new Hotel(results.getString(1), // id
+                        results.getString(2), // name
+                        results.getString(3), // street
+                        results.getString(4), // city
+                        results.getString(5), // state
+                        results.getString(6), // lat
+                        results.getString(7)); // long
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return hotel;
     }
 
     /**

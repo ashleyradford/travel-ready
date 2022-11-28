@@ -8,9 +8,28 @@
     #if ($username)
     <h2>Welcome home, $username</h2>
     <form method="get" action="/login">
-        <input hidden name="session" value="end"/>
+        <input type="hidden" name="session" value="end"/>
         <p><input type="submit" value="Logout"></p>
     </form>
+
+    <form method="get" action="/home">
+        Hotel Search:<input type="text" name="hotelSearch">
+        <input type="submit" value="Enter">
+    </form>
+
+    <p></p>
+
+    #if ($matchedHotels)
+        #foreach($hotel in $matchedHotels)
+            <form method="get" action="/info">
+                <input type="hidden" name="hotelName" value="$hotel">
+                <button type="submit">
+                    $hotel
+                </button>
+            </form>
+        #end
+    #end
+
     #else
     <h2>Please login.</h2>
     <form method="get" action="/login">
