@@ -122,7 +122,7 @@ public class HotelDB {
      * @param latitude hotel lat
      * @param longitude hotel long
      */
-    public void addHotel(String hotelid, String name, String street, String city,
+    public boolean addHotel(String hotelid, String name, String street, String city,
                          String state, String latitude, String longitude) {
         PreparedStatement statement;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
@@ -136,8 +136,10 @@ public class HotelDB {
             statement.setString(7, longitude);
             statement.executeUpdate();
             statement.close();
+            return true;
         } catch (SQLException e) {
             System.out.println("SQLException when adding new hotel: " + e);
+            return false;
         }
     }
 
@@ -217,6 +219,26 @@ public class HotelDB {
             }
         } catch (SQLException e) {
             System.out.println("SQLException when adding new review: " + e);
+        }
+    }
+
+    public boolean updateUserReview(String hotelid, String username, String rating, String title,
+                                    String text, String submissionDate) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.UPDATE_REVIEW);
+            statement.setString(1, rating);
+            statement.setString(2, title);
+            statement.setString(3, text);
+            statement.setString(4, submissionDate);
+            statement.setString(5, hotelid);
+            statement.setString(6, username);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding new review: " + e);
+            return false;
         }
     }
 

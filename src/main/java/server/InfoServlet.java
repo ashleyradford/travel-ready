@@ -42,7 +42,6 @@ public class InfoServlet extends HttpServlet {
         // get hotel data for template
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         Hotel hotel = hotelDB.getHotel(hotelName);
-        //System.out.println(hotel.getName());
 
         // get avg rating
         String avgRating = hotelDB.getAvgRating(hotelName);
@@ -65,14 +64,5 @@ public class InfoServlet extends HttpServlet {
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
         out.println(writer);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        PrintWriter out = response.getWriter();
     }
 }

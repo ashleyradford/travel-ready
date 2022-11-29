@@ -53,13 +53,4 @@ public class HomeServlet extends HttpServlet {
         template.merge(context, writer);
         out.println(writer);
     }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        PrintWriter out = response.getWriter();
-    }
 }

@@ -8,7 +8,7 @@
     #if ($username)
 
     #if ($error == "dup")
-    <p style="color:#FF0000">Users may only submit one review per hotel.</p>
+        <p style="color:#FF0000">Users may only submit one review per hotel.</p>
     #elseif ($error == "failed")
         <p style="color:#FF0000">Could not add review, please try again.</p>
     #end
@@ -16,19 +16,18 @@
     <h3>New Review</h3>
     <p>$hotelName</p>
     <form method="post" action="/add-review">
+        <input type="hidden" name="hotelSearch" value="$hotelSearch">
         <input type="hidden" name="hotelid" value="$hotelid">
         <input type="hidden" name="hotelName" value="$hotelName">
-        Rating:
+        <p>Rating:
         <label><input type="radio" name="rating" value="1" required >1</label>
         <label><input type="radio" name="rating" value="2">2</label>
         <label><input type="radio" name="rating" value="3">3</label>
         <label><input type="radio" name="rating" value="4">4</label>
-        <label><input type="radio" name="rating" value="5">5</label>
-        <p></p>
-        Title: <input type="text" name="title" size="35"><br>
-        <p></p>
+        <label><input type="radio" name="rating" value="5">5</label></p>
+        <p>Title: <input type="text" name="title" size="35"></p>
         Review Text:<br>
-        <textarea name="review-text" rows="6" cols="40"></textarea>
+        <textarea name="review-text" rows="6" cols="40" maxlength="1600"></textarea>
         <p><input type="submit" value="Submit Review"></p>
     </form>
     <form method="get" action="/info">

@@ -15,9 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-public class AddReviewServlet extends HttpServlet {
+public class EditReviewServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,27 +30,38 @@ public class AddReviewServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        // for back button
+        // get and clean parameters
         String hotelSearch = request.getParameter("hotelSearch");
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
-        if (hotelSearch == null) hotelSearch = "";
-
-        // grab hotel name and hotel id
-        String hotelid = request.getParameter("hotelid");
-        hotelid = StringEscapeUtils.escapeHtml4(hotelid);
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
-        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&"); // TODO better fix?
+        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "%26"); // TODO better fix?
+        String hotelid = request.getParameter("hotelid");
+        hotelid = StringEscapeUtils.escapeHtml4(hotelid);
+        String originalAuthor = request.getParameter("originalAuthor");
+        originalAuthor = StringEscapeUtils.escapeHtml4(originalAuthor);
+
+        // get edit field parameters
+        String editRating= request.getParameter("rating");
+        editRating = StringEscapeUtils.escapeHtml4(editRating);
+        String editTitle = request.getParameter("title");
+        editTitle = StringEscapeUtils.escapeHtml4(editTitle);
+        String editText = request.getParameter("review-text");
+        editText = StringEscapeUtils.escapeHtml4(editText);
 
         // set up velocity template
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("templates/add-review.html");
+        Template template = ve.getTemplate("templates/edit-review.html");
         context.put("hotelSearch", hotelSearch);
         context.put("hotelid", hotelid);
         context.put("hotelName", hotelName);
+        context.put("originalAuthor", originalAuthor);
         context.put("username", username);
+        context.put("editRating", editRating);
+        context.put("editTitle", editTitle);
+        context.put("editText", editText);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
@@ -77,30 +87,29 @@ public class AddReviewServlet extends HttpServlet {
         if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "%26"); // TODO better fix?
         String hotelid = request.getParameter("hotelid");
         hotelid = StringEscapeUtils.escapeHtml4(hotelid);
-        String rating = request.getParameter("rating");
-        rating = StringEscapeUtils.escapeHtml4(rating);
-        String title = request.getParameter("title");
-        title = StringEscapeUtils.escapeHtml4(title);
-        String text = request.getParameter("review-text");
-        text = StringEscapeUtils.escapeHtml4(text);
+        String originalAuthor = request.getParameter("originalAuthor"); // TODO maybe could bypass this before
+        originalAuthor = StringEscapeUtils.escapeHtml4(originalAuthor);
 
-        // generate UUID review id and date time
-        UUID reviewUUID = UUID.randomUUID();
-        String reviewid = reviewUUID.toString().replaceAll("-", "");
-        LocalDateTime submissionDate = LocalDateTime.now();
+        // potentially edited fields
+        String editRating = request.getParameter("edit-rating");
+        editRating = StringEscapeUtils.escapeHtml4(editRating);
+        String editTitle = request.getParameter("edit-title");
+        editTitle = StringEscapeUtils.escapeHtml4(editTitle);
+        String editText = request.getParameter("edit-text");
+        editText = StringEscapeUtils.escapeHtml4(editText);
 
-        // first check if user already submitted review to hotel
+        LocalDateTime editDate = LocalDateTime.now();
+
+        // edit review
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
-        if (hotelDB.getUserReview(hotelid, username)) {
-            response.sendRedirect("/add-review?error=dup&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
-        } else {
-            // add review to database
-            if (hotelDB.addReview(reviewid, hotelid, username, rating, title, text, submissionDate.toString())) {
+        if (username != null && username.equals(originalAuthor)) {
+            if (hotelDB.updateUserReview(hotelid, username, editRating, editTitle, editText, editDate.toString())) {
                 response.sendRedirect("/info?hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
             } else {
-                // review was not successfully added
-                response.sendRedirect("/add-review?error=failed&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
+                // failed to update
             }
+        } else {
+            // not the original author
         }
     }
 }

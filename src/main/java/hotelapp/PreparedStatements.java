@@ -54,9 +54,18 @@ public class PreparedStatements {
                     "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                     "ON DUPLICATE KEY UPDATE reviewid = reviewid;"; // will not trigger update
 
+    // updates a user's review in travel_reviews table
+    public static final String UPDATE_REVIEW =
+            "UPDATE travel_reviews " +
+                    "SET rating = ?, " +
+                    "title = ?, " +
+                    "text = ?, " +
+                    "submission_date = ? " +
+                    "WHERE hotelid = ? AND username = ?";
+
     /** ------------------------------------ SQL QUERIES ------------------------------------ */
 
-    // select username from travel_users (for actual registration)
+    // selects username from travel_users (for actual registration)
     public static final String SELECT_USERNAME =
             "SELECT username FROM travel_users WHERE username = ?";
 
@@ -64,19 +73,20 @@ public class PreparedStatements {
     public static final String AUTHENTICATE_USER =
             "SELECT username FROM travel_users WHERE username = ? AND password = ?";
 
-    // select a user's salt from travel_users
+    // selects a user's salt from travel_users
     public static final String SELECT_SALT =
             "SELECT usersalt FROM travel_users WHERE username = ?";
 
-    // select hotel name from travel_hotel using regex
+    // selects hotel name from travel_hotel using regex
     public static final String SELECT_HOTEL =
             "SELECT name FROM travel_hotels WHERE name LIKE ?";
 
-    // select hotel data for a given hotel name
+    // selects hotel data for a given hotel name
     public static final String SELECT_HOTEL_DATA =
             "SELECT hotelid, name, street, city, state, latitude, longitude " +
                     "FROM travel_hotels WHERE name = ?";
 
+    // selects avg rating for a given hotel name
     public static final String SELECT_AVG_RATING =
             "SELECT AVG(rating) AS avg_rating " +
                     "FROM travel_hotels " +
@@ -85,7 +95,7 @@ public class PreparedStatements {
                     "GROUP BY travel_hotels.name " +
                     "HAVING name = ?;";
 
-    // select all review data for a given hotel name
+    // selects all review data for a given hotel name
     public static final String SELECT_HOTEL_REVIEWS =
             "SELECT travel_reviews.reviewid, travel_reviews.hotelid, travel_reviews.username, " +
                     "travel_reviews.rating, travel_reviews.title, travel_reviews.text, " +
@@ -96,7 +106,7 @@ public class PreparedStatements {
                     "WHERE travel_hotels.name = ? " +
                     "ORDER BY travel_reviews.submission_date DESC";
 
-    // check if user already added a review for this hotel
+    // checks if user already added a review for this hotel
     public static final String SELECT_USER_REVIEW =
             "SELECT reviewid FROM travel_reviews WHERE hotelid = ? AND username = ?";
 }
