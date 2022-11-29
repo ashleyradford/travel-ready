@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new Review</title>
+</head>
+<body>
+    #if ($username)
+
+    #if ($error == "failed")
+        <p style="color:#FF0000">Could not add review, please try again.</p>
+    #end
+
+    <h3>New Review</h3>
+    <p>$hotelName</p>
+    <form method="post" action="/add-review">
+        <input type="hidden" name="hotelid" value="$hotelid">
+        <input type="hidden" name="hotelName" value="$hotelName">
+        Rating:
+        <input type="radio" id="1" name="rating" value="1"><label for="1">1</label>
+        <input type="radio" id="2" name="rating" value="2"><label for="2">2</label>
+        <input type="radio" id="3" name="rating" value="3"><label for="3">3</label>
+        <input type="radio" id="4" name="rating" value="4"><label for="4">4</label>
+        <input type="radio" id="5" name="rating" value="5"><label for="5">5</label>
+        <p></p>
+        Title: <input type="text" name="title" size="35"><br>
+        <p></p>
+        Review Text:<br>
+        <textarea name="review-text" rows="6" cols="40"></textarea>
+        <p><input type="submit" value="Submit Review"></p>
+    </form>
+
+    #else
+    <h3>Please login or create new account.</h3>
+    <form method="get" action="/login">
+        <p><input type="submit" value="Login"></p>
+    </form>
+    <form method="get" action="/registration">
+        <p><input type="submit" value="Register"></p>
+    </form>
+    #end
+</body>
+</html>

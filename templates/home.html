@@ -13,20 +13,25 @@
     </form>
 
     <form method="get" action="/home">
-        Hotel Search:<input type="text" name="hotelSearch">
+        Hotel Search:<input type="text" name="hotelSearch" value="$hotelSearch">
         <input type="submit" value="Enter">
     </form>
 
     <p></p>
-    #if ($matchedHotels)
-        #foreach ($hotel in $matchedHotels)
+    #set ($i = 1)
+    #if ($matchedHotels.size() > 0)
+        #foreach ($hotelName in $matchedHotels)
+            <!--<p>$i. <a href="/info?hotelName=$hotelName">$hotelName</a></p>-->
             <form method="get" action="/info">
-                <input type="hidden" name="hotelName" value="$hotel">
+                <input type="hidden" name="hotelName" value="$hotelName">
                 <button type="submit">
-                    $hotel
+                    $i. $hotelName
                 </button>
             </form>
+            #set ($i = $i + 1)
         #end
+    #else
+        <p>Sorry, no results.</p>
     #end
 
     #else

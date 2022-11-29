@@ -27,7 +27,7 @@ public class PreparedStatements {
     // creates travel_reviews table
     public static final String CREATE_REVIEWS_TABLE =
             "CREATE TABLE IF NOT EXISTS travel_reviews (" +
-                    "reviewid CHAR(24) PRIMARY KEY, " +
+                    "reviewid VARCHAR(32) PRIMARY KEY, " +
                     "hotelid INTEGER NOT NULL, " +
                     "username VARCHAR(32) NOT NULL, " +
                     "rating INTEGER NOT NULL, " +

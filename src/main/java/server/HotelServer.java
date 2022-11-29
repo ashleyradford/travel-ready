@@ -97,6 +97,7 @@ public class HotelServer {
         hotelServer.addServletMapping("/login", LoginServlet.class.getName());
         hotelServer.addServletMapping("/home", HomeServlet.class.getName());
         hotelServer.addServletMapping("/info", InfoServlet.class.getName());
+        hotelServer.addServletMapping("/add-review", AddReviewServlet.class.getName());
 
         // start jetty server
         try {

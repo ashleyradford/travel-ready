@@ -175,7 +175,7 @@ public class HotelDB {
      * @param text user review
      * @param submission_date user submission date
      */
-    public void addReview(String reviewid, String hotelid, String username, String rating,
+    public boolean addReview(String reviewid, String hotelid, String username, String rating,
                              String title, String text, String submission_date) {
         PreparedStatement statement;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
@@ -189,8 +189,10 @@ public class HotelDB {
             statement.setString(7, submission_date);
             statement.executeUpdate();
             statement.close();
+            return true;
         } catch (SQLException e) {
             System.out.println("SQLException when adding new review: " + e);
+            return false;
         }
     }
 

@@ -54,9 +54,9 @@
    </script>
 
     #if ($error == "dup")
-    <p style="color:#FF0000">Username is already in use, please select another.</p>
+        <p style="color:#FF0000">Username is already in use, please select another.</p>
     #elseif ($error == "failed")
-    <p style="color:#FF0000">Could not register user, please try again.</p>
+        <p style="color:#FF0000">Could not register user, please try again.</p>
     #end
 
     <h3>New user registration</h3>
@@ -68,14 +68,12 @@
             <input type="text"
                    name="name"
                    pattern="[a-zA-Z][a-zA-Z0-9_]{2,16}" required
-                   oninvalid="validateName(this);"
-                   oninput="setCustomValidity('')"><br>
+                   oninvalid="validateName(this);"><br>
         Choose your password:<br>
             <input type="password"
                    name="pass"
                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%&]).{8,20}" required
-                   oninvalid="validatePassword(this);"
-                   oninput="setCustomValidity('')">
+                   oninvalid="validatePassword(this);">
         <p><input type="submit" value="Register"></p>
     </form>
 

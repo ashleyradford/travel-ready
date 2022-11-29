@@ -55,7 +55,6 @@ public class RegistrationServlet extends HttpServlet {
 
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
-        PrintWriter out = response.getWriter();
 
         String username = request.getParameter("name");
         username = StringEscapeUtils.escapeHtml4(username);

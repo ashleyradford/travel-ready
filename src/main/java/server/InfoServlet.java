@@ -35,10 +35,12 @@ public class InfoServlet extends HttpServlet {
         // hotel search if applicable
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
+        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&"); // TODO better fix?
 
         // get hotel data for template
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         Hotel hotel = hotelDB.getHotel(hotelName);
+        //System.out.println(hotel.getName());
 
         // get avg rating
         String avgRating = hotelDB.getAvgRating(hotelName);
