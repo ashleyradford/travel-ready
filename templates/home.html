@@ -23,6 +23,7 @@
         #foreach ($hotelName in $matchedHotels)
             <!--<p>$i. <a href="/info?hotelName=$hotelName">$hotelName</a></p>-->
             <form method="get" action="/info">
+                <input type="hidden" name="hotelSearch" value="$hotelSearch">
                 <input type="hidden" name="hotelName" value="$hotelName">
                 <button type="submit">
                     $i. $hotelName

@@ -341,6 +341,21 @@ public class HotelDB {
         return reviews;
     }
 
+    public boolean getUserReview(String hotelid, String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_USER_REVIEW);
+            statement.setString(1, hotelid);
+            statement.setString(2, username);
+
+            ResultSet results = statement.executeQuery();
+            return results.next();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
     /**
      * Gets the salt for a specific user
      * @param connection database connection

@@ -95,4 +95,8 @@ public class PreparedStatements {
                     "ON travel_reviews.hotelid = travel_hotels.hotelid " +
                     "WHERE travel_hotels.name = ? " +
                     "ORDER BY travel_reviews.submission_date DESC";
+
+    // check if user already added a review for this hotel
+    public static final String SELECT_USER_REVIEW =
+            "SELECT reviewid FROM travel_reviews WHERE hotelid = ? AND username = ?";
 }

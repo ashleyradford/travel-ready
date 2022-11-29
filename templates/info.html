@@ -18,26 +18,26 @@
     #set ($url = $hotel.getCity() + "-Hotels-" + $hotel.getName() + ".h" + $hotel.getHotelid() + ".Hotel-Information")
     <p><a href="https://www.expedia.com/$url" target="_blank" rel="noopener noreferrer">$hotelName</a></p>
 
-    #if ($reviewList.size() > 0)
-        <form method="get" action="/add-review">
-            <input type="hidden" name="hotelName" value="$hotelName">
-            <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
-            <p><input type="submit" value="Add Review"></p><br>
-        </form>
-        <b>$reviewList.size() reviews</b>
-        #foreach ($review in $reviewList)
-            <p><b>Rating:</b> $review.getRating()</p>
-            <p><b>Title:</b> $review.getTitle()</p>
-            <p><b>By:</b> $review.getUsername() on $review.getSubmissionDate()</p>
-            <p>$review.getText()</p><br>
-        #end
-    #else
+    #if ($reviewList.size() == 0)
         <p>No reviews yet. Want to add one?</p>
-        <form method="get" action="/add-review">
-            <input type="hidden" name="hotelName" value="$hotelName">
-            <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
-            <p><input type="submit" value="Add Review"></p>
-        </form>
+    #end
+    <form method="get" action="/add-review">
+        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+        <input type="hidden" name="hotelName" value="$hotelName">
+        <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
+        <p><input type="submit" value="Add Review"></p>
+    </form>
+    <form method="get" action="/home">
+        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+        <p><input type="submit" value="Back"></p><br>
+    </form>
+
+    <b>$reviewList.size() reviews</b>
+    #foreach ($review in $reviewList)
+        <p><b>Rating:</b> $review.getRating()</p>
+        <p><b>Title:</b> $review.getTitle()</p>
+        <p><b>By:</b> $review.getUsername() on $review.getSubmissionDate()</p>
+        <p>$review.getText()</p><br>
     #end
 
     #else

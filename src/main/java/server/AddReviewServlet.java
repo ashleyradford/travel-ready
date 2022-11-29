@@ -31,6 +31,11 @@ public class AddReviewServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
+        // for back button
+        String hotelSearch = request.getParameter("hotelSearch");
+        hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
+        if (hotelSearch == null) hotelSearch = "";
+
         // grab hotel name and hotel id
         String hotelid = request.getParameter("hotelid");
         hotelid = StringEscapeUtils.escapeHtml4(hotelid);
@@ -47,6 +52,7 @@ public class AddReviewServlet extends HttpServlet {
 
         Template template = ve.getTemplate("templates/add-review.html");
         context.put("error", error);
+        context.put("hotelSearch", hotelSearch);
         context.put("hotelid", hotelid);
         context.put("hotelName", hotelName);
         context.put("username", username);
@@ -85,14 +91,19 @@ public class AddReviewServlet extends HttpServlet {
         String reviewid = reviewUUID.toString().replaceAll("-", "");
         LocalDateTime submissionDate = LocalDateTime.now();
 
-        // add review to database
+        // first check if user already submitted review to hotel
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
-        if (hotelDB.addReview(reviewid, hotelid, username, rating,
-                title, text, submissionDate.toString())) {
-            response.sendRedirect("/info?hotelName=" + hotelName);
+        if (hotelDB.getUserReview(hotelid, username)) {
+            response.sendRedirect("/add-review?error=dup&hotelName=" + hotelName);
         } else {
-            // review was not successfully added
-            response.sendRedirect("/add-review?error=failed&hotelName=" + hotelName);
+            // add review to database
+            if (hotelDB.addReview(reviewid, hotelid, username, rating,
+                    title, text, submissionDate.toString())) {
+                response.sendRedirect("/info?hotelName=" + hotelName);
+            } else {
+                // review was not successfully added
+                response.sendRedirect("/add-review?error=failed&hotelName=" + hotelName);
+            }
         }
     }
 }

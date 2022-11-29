@@ -32,7 +32,9 @@ public class InfoServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        // hotel search if applicable
+        // get hotel name and search
+        String hotelSearch = request.getParameter("hotelSearch");
+        hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
         if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&"); // TODO better fix?
@@ -54,6 +56,7 @@ public class InfoServlet extends HttpServlet {
 
         Template template = ve.getTemplate("templates/info.html");
         context.put("username", username);
+        context.put("hotelSearch", hotelSearch);
         context.put("hotelName", hotelName);
         context.put("hotel", hotel);
         context.put("avgRating", avgRating);
