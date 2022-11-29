@@ -36,7 +36,9 @@ public class AddReviewServlet extends HttpServlet {
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
         if (hotelSearch == null) hotelSearch = "";
 
-        // grab hotel name and hotel id
+        // grab error, hotel name and hotel id
+        String error = request.getParameter("error");
+        error = StringEscapeUtils.escapeHtml4(error);
         String hotelid = request.getParameter("hotelid");
         hotelid = StringEscapeUtils.escapeHtml4(hotelid);
         String hotelName = request.getParameter("hotelName");
@@ -48,6 +50,7 @@ public class AddReviewServlet extends HttpServlet {
         VelocityContext context = new VelocityContext();
 
         Template template = ve.getTemplate("templates/add-review.html");
+        context.put("error", error);
         context.put("hotelSearch", hotelSearch);
         context.put("hotelid", hotelid);
         context.put("hotelName", hotelName);

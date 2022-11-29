@@ -121,6 +121,7 @@ public class HotelDB {
      * @param state hotel state
      * @param latitude hotel lat
      * @param longitude hotel long
+     * @return true if successfully added, false otherwise
      */
     public boolean addHotel(String hotelid, String name, String street, String city,
                          String state, String latitude, String longitude) {
@@ -176,6 +177,7 @@ public class HotelDB {
      * @param title user title
      * @param text user review
      * @param submission_date user submission date
+     * @return true if successfully added, false otherwise
      */
     public boolean addReview(String reviewid, String hotelid, String username, String rating,
                              String title, String text, String submission_date) {
@@ -222,6 +224,16 @@ public class HotelDB {
         }
     }
 
+    /**
+     * Updates a given users review
+     * @param hotelid hotel id
+     * @param username username
+     * @param rating edit rating
+     * @param title edit title
+     * @param text edit text
+     * @param submissionDate edit date
+     * @return true if successfully updated, false otherwise
+     */
     public boolean updateUserReview(String hotelid, String username, String rating, String title,
                                     String text, String submissionDate) {
         PreparedStatement statement;
@@ -263,6 +275,12 @@ public class HotelDB {
         return false;
     }
 
+    /**
+     * Authenticates username with password
+     * @param username entered username
+     * @param password entered password
+     * @return true if authorized, false otherwise
+     */
     public boolean authenticateUser(String username, String password) {
         PreparedStatement statement;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
@@ -280,6 +298,11 @@ public class HotelDB {
         return false;
     }
 
+    /**
+     * Finds hotel names that match a given search keyword
+     * @param name keyword
+     * @return list of hotel names
+     */
     public List<String> findHotels(String name) {
         PreparedStatement statement;
         List<String> hotels = new ArrayList<>();
@@ -297,6 +320,11 @@ public class HotelDB {
         return hotels;
     }
 
+    /**
+     * Retrieves hotel data from sql database
+     * @param name hotel name
+     * @return Hotel object
+     */
     public Hotel getHotel(String name) {
         PreparedStatement statement;
         Hotel hotel = null;
@@ -320,6 +348,11 @@ public class HotelDB {
         return hotel;
     }
 
+    /**
+     * Retrieves the average rating of a hotel
+     * @param name hotel name
+     * @return hotel average rating
+     */
     public String getAvgRating(String name) {
         PreparedStatement statement;
         String avgRating = null;
@@ -337,6 +370,11 @@ public class HotelDB {
         return avgRating;
     }
 
+    /**
+     * Retrieves a list of reviews for a given hotel name
+     * @param name hotel name
+     * @return list of Review objects
+     */
     public List<Review> getHotelReviews(String name) {
         PreparedStatement statement;
         List<Review> reviews = new ArrayList<>();
@@ -363,6 +401,12 @@ public class HotelDB {
         return reviews;
     }
 
+    /**
+     * Retrieves the reviewid for a given hotelid and username
+     * @param hotelid hotel id
+     * @param username username
+     * @return true if review exists, false otherwise
+     */
     public boolean getUserReview(String hotelid, String username) {
         PreparedStatement statement;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
