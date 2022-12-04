@@ -27,6 +27,11 @@
         <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
         <p><input type="submit" value="Add Review"></p>
     </form>
+
+    #if ($error == "dup")
+    <p style="color:#FF0000">Users may only submit one review per hotel.</p>
+    #end
+
     <form method="get" action="/home">
         <input type="hidden" name="hotelSearch" value="$hotelSearch">
         <p><input type="submit" value="Back"></p><br>
@@ -43,10 +48,6 @@
                 <input type="hidden" name="hotelSearch" value="$hotelSearch">
                 <input type="hidden" name="hotelName" value="$hotelName">
                 <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
-                <input type="hidden" name="originalAuthor" value="$review.getUsername()">
-                <input type="hidden" name="rating" value="$review.getRating()">
-                <input type="hidden" name="title" value="$review.getTitle()">
-                <input type="hidden" name="review-text" value="$review.getText()">
                 <input type="submit" value="Edit"><br>
             </form>
         #end<br>

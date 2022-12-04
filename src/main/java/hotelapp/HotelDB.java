@@ -19,7 +19,7 @@ public class HotelDB {
      */
     public HotelDB(String configPath) {
         this.config = loadConfig(configPath);
-        this.uri = "jdbc:mysql://" + config.getProperty("hostname") + "/" + config.getProperty("username") + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+        this.uri = "jdbc:mysql://" + config.getProperty("hostname") + "/" + config.getProperty("database") + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
     }
 
     /**
@@ -249,7 +249,28 @@ public class HotelDB {
             statement.close();
             return true;
         } catch (SQLException e) {
-            System.out.println("SQLException when adding new review: " + e);
+            System.out.println("SQLException when updating user review: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * Updates a given users review
+     * @param hotelid hotel id
+     * @param username username
+     * @return true if successfully deleted, false otherwise
+     */
+    public boolean deleteUserReview(String hotelid, String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.DELETE_REVIEW);
+            statement.setString(1, hotelid);
+            statement.setString(2, username);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when deleting user review: " + e);
             return false;
         }
     }
@@ -407,19 +428,28 @@ public class HotelDB {
      * @param username username
      * @return true if review exists, false otherwise
      */
-    public boolean getUserReview(String hotelid, String username) {
+    public Review getUserReview(String hotelid, String username) {
         PreparedStatement statement;
+        Review review = null;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
             statement = connection.prepareStatement(PreparedStatements.SELECT_USER_REVIEW);
             statement.setString(1, hotelid);
             statement.setString(2, username);
 
             ResultSet results = statement.executeQuery();
-            return results.next();
+            if (results.next()) {
+                review= new Review(results.getString(1), // reviewid
+                        results.getString(2),   // hotelid
+                        results.getString(3),   // username
+                        results.getString(4),   // rating
+                        results.getString(5),   // title
+                        results.getString(6),   // text
+                        results.getString(7));  // submission_date
+            }
         } catch (SQLException e) {
             System.out.println(e);
         }
-        return false;
+        return review;
     }
 
     /**

@@ -54,7 +54,7 @@ public class PreparedStatements {
                     "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                     "ON DUPLICATE KEY UPDATE reviewid = reviewid;"; // will not trigger update
 
-    // updates a user's review in travel_reviews table
+    // updates a user review in travel_reviews table
     public static final String UPDATE_REVIEW =
             "UPDATE travel_reviews " +
                     "SET rating = ?, " +
@@ -62,6 +62,10 @@ public class PreparedStatements {
                     "text = ?, " +
                     "submission_date = ? " +
                     "WHERE hotelid = ? AND username = ?";
+
+    // deletes a users review in travel_reviews table
+    public static final String DELETE_REVIEW =
+            "DELETE from travel_reviews WHERE hotelid = ? AND username = ?";
 
     /** ------------------------------------ SQL QUERIES ------------------------------------ */
 
@@ -106,7 +110,8 @@ public class PreparedStatements {
                     "WHERE travel_hotels.name = ? " +
                     "ORDER BY travel_reviews.submission_date DESC";
 
-    // checks if user already added a review for this hotel
+    // selects review data for a given hotelid and username
     public static final String SELECT_USER_REVIEW =
-            "SELECT reviewid FROM travel_reviews WHERE hotelid = ? AND username = ?";
+            "SELECT reviewid, hotelid, username, rating, title, text, submission_date " +
+                    "FROM travel_reviews WHERE hotelid = ? AND username = ?";
 }

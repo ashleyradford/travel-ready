@@ -6,40 +6,41 @@
 </head>
 <body>
 
-    #if ($username && $username == $originalAuthor)
-        <h3>Edit Review</h3>
-        <p>$hotelName</p>
-        <form method="post" action="/edit-review">
-            <input type="hidden" name="hotelSearch" value="$hotelSearch">
-            <input type="hidden" name="hotelid" value="$hotelid">
-            <input type="hidden" name="hotelName" value="$hotelName">
-            <input type="hidden" name="originalAuthor" value="$originalAuthor">
-            <p>Rating:
-            #if ($editRating == 1) <label><input type="radio" name="edit-rating" value="1" required checked >1</label>
-                #else <label><input type="radio" name="edit-rating" value="1" required>1</label> #end
-            #if ($editRating == 2) <label><input type="radio" name="edit-rating" value="2" checked >2</label>
-                #else <label><input type="radio" name="edit-rating" value="2">2</label> #end
-            #if ($editRating == 3) <label><input type="radio" name="edit-rating" value="3" checked >3</label>
-                #else <label><input type="radio" name="edit-rating" value="3">3</label> #end
-            #if ($editRating == 4) <label><input type="radio" name="edit-rating" value="4" checked >4</label>
-                #else <label><input type="radio" name="edit-rating" value="4">4</label> #end
-            #if ($editRating == 5) <label><input type="radio" name="edit-rating" value="5" checked >5</label>
-                #else <label><input type="radio" name="edit-rating" value="5">5</label> #end </p>
-            <p>Title: <input type="text" name="edit-title" size="35" value="$editTitle"></p>
-            Review Text:<br>
-            <textarea name="edit-text" rows="6" cols="40" maxlength="1600">$editText</textarea>
-            <p><input type="submit" value="Update Review"></p>
-        </form>
-        <form method="get" action="/info">
-            <input type="hidden" name="hotelSearch" value="$hotelSearch">
-            <input type="hidden" name="hotelName" value="$hotelName">
-            <p><input type="submit" value="Back"></p>
-        </form>
-
-    #else
-        <h3>Edit Review</h3>
-        <p style="color:#FF0000">Hey! Users may only edit their own reviews! >:(</p>
-    #end
+    <h3>Edit Review</h3>
+    <p>$hotelName</p>
+    <form method="post" action="/edit-review">
+        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+        <input type="hidden" name="hotelid" value="$hotelid">
+        <input type="hidden" name="hotelName" value="$hotelName">
+        <p>Rating:
+        #if ($editRating == 1) <label><input type="radio" name="edit-rating" value="1" required checked >1</label>
+            #else <label><input type="radio" name="edit-rating" value="1" required>1</label> #end
+        #if ($editRating == 2) <label><input type="radio" name="edit-rating" value="2" checked >2</label>
+            #else <label><input type="radio" name="edit-rating" value="2">2</label> #end
+        #if ($editRating == 3) <label><input type="radio" name="edit-rating" value="3" checked >3</label>
+            #else <label><input type="radio" name="edit-rating" value="3">3</label> #end
+        #if ($editRating == 4) <label><input type="radio" name="edit-rating" value="4" checked >4</label>
+            #else <label><input type="radio" name="edit-rating" value="4">4</label> #end
+        #if ($editRating == 5) <label><input type="radio" name="edit-rating" value="5" checked >5</label>
+            #else <label><input type="radio" name="edit-rating" value="5">5</label> #end </p>
+        <p>Title: <input type="text" name="edit-title" size="35" value="$editTitle" placeholder="Title"></p>
+        Review Text:<br>
+        <textarea name="edit-text" rows="6" cols="40" maxlength="1600" placeholder="Review">$editText</textarea>
+        <input type="hidden" name="modify" value="edit">
+        <p><input type="submit" value="Update Review"></p>
+    </form>
+    <form method="post" action="/edit-review">
+        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+        <input type="hidden" name="hotelid" value="$hotelid">
+        <input type="hidden" name="hotelName" value="$hotelName">
+        <input type="hidden" name="modify" value="delete">
+        <p><input type="submit" value="Delete Review"></p>
+    </form>
+    <form method="get" action="/info">
+        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+        <input type="hidden" name="hotelName" value="$hotelName">
+        <p><input type="submit" value="Back"></p>
+    </form>
 
 </body>
 </html>

@@ -5,7 +5,10 @@ import hotelapp.HotelDB;
 import hotelapp.HotelParser;
 import hotelapp.ReviewParser;
 import org.apache.velocity.app.VelocityEngine;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +39,11 @@ public class HotelServer {
      * @throws Exception if access failed
      */
     public void start() throws Exception {
-        Server server = new Server(PORT); // jetty server
-        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        // jetty server
+        Server server = new Server(PORT);
+
+        // ********************** set up server handler for servlets **********************
+        ServletContextHandler serverHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
         // initialize Velocity
         VelocityEngine velocity = new VelocityEngine();
@@ -45,12 +51,20 @@ public class HotelServer {
 
         // map end points to added pairs in servlets map
         for (String path : servlets.keySet()) {
-            handler.addServlet(servlets.get(path), path);
+            serverHandler.addServlet(servlets.get(path), path);
         }
 
-        handler.setAttribute("hotelDB", hotelDB);
-        handler.setAttribute("templateEngine", velocity);
-        server.setHandler(handler);
+        serverHandler.setAttribute("hotelDB", hotelDB);
+        serverHandler.setAttribute("templateEngine", velocity);
+
+        // ********************** set up resource handler for js **********************
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setDirectoriesListed(true);
+        resourceHandler.setResourceBase("templates");
+
+        HandlerList handlers = new HandlerList();
+        handlers.setHandlers(new Handler[] { resourceHandler, serverHandler });
+        server.setHandler(handlers);
 
         server.start();
         server.join();

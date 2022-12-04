@@ -33,6 +33,8 @@ public class InfoServlet extends HttpServlet {
         String username = (String) session.getAttribute("username");
 
         // get hotel name and search
+        String error = request.getParameter("error");
+        error = StringEscapeUtils.escapeHtml4(error);
         String hotelSearch = request.getParameter("hotelSearch");
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
         String hotelName = request.getParameter("hotelName");
@@ -54,6 +56,7 @@ public class InfoServlet extends HttpServlet {
         VelocityContext context = new VelocityContext();
 
         Template template = ve.getTemplate("templates/info.html");
+        context.put("error", error);
         context.put("username", username);
         context.put("hotelSearch", hotelSearch);
         context.put("hotelName", hotelName);

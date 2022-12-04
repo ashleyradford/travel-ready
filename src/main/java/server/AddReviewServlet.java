@@ -45,6 +45,13 @@ public class AddReviewServlet extends HttpServlet {
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
         if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&"); // TODO better fix?
 
+        // first check if user already submitted review to hotel
+        HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
+        if (hotelDB.getUserReview(hotelid, username) != null) {
+            if (hotelName != null) hotelName = hotelName.replaceAll("&", "%26"); // TODO better fix?
+            response.sendRedirect("/info?error=dup&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
+        }
+
         // set up velocity template
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
@@ -92,18 +99,13 @@ public class AddReviewServlet extends HttpServlet {
         String reviewid = reviewUUID.toString().replaceAll("-", "");
         LocalDateTime submissionDate = LocalDateTime.now();
 
-        // first check if user already submitted review to hotel
+        // add review to database
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
-        if (hotelDB.getUserReview(hotelid, username)) {
-            response.sendRedirect("/add-review?error=dup&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
+        if (hotelDB.addReview(reviewid, hotelid, username, rating, title, text, submissionDate.toString())) {
+            response.sendRedirect("/info?hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
         } else {
-            // add review to database
-            if (hotelDB.addReview(reviewid, hotelid, username, rating, title, text, submissionDate.toString())) {
-                response.sendRedirect("/info?hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
-            } else {
-                // review was not successfully added
-                response.sendRedirect("/add-review?error=failed&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
-            }
+            // review was not successfully added
+            response.sendRedirect("/add-review?error=failed&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
         }
     }
 }
