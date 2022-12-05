@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("templates/login.html");
+        Template template = ve.getTemplate("static/templates/login.html");
         context.put("auth", auth);
 
         StringWriter writer = new StringWriter();

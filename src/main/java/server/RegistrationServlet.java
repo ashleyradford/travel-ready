@@ -41,7 +41,7 @@ public class RegistrationServlet extends HttpServlet {
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("templates/registration.html");
+        Template template = ve.getTemplate("static/templates/registration.html");
         context.put("error", error);
 
         StringWriter writer = new StringWriter();

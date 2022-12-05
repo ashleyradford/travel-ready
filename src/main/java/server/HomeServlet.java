@@ -44,7 +44,7 @@ public class HomeServlet extends HttpServlet {
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("templates/home.html");
+        Template template = ve.getTemplate("static/templates/home.html");
         context.put("username", username);
         context.put("hotelSearch", hotelSearch);
         context.put("matchedHotels", matchedHotels);

@@ -56,7 +56,7 @@ public class EditReviewServlet extends HttpServlet {
             VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
             VelocityContext context = new VelocityContext();
 
-            Template template = ve.getTemplate("templates/edit-review.html");
+            Template template = ve.getTemplate("static/templates/edit-review.html");
             context.put("hotelSearch", hotelSearch);
             context.put("hotelid", hotelid);
             context.put("hotelName", hotelName);

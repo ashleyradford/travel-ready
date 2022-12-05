@@ -215,7 +215,7 @@ public class HotelDB {
                 statement.setString(4, r.getRating());
                 statement.setString(5, r.getTitle());
                 statement.setString(6, r.getText());
-                statement.setString(7, r.getSubmissionDate().toString());
+                statement.setString(7, r.getSubmissionDate());
                 statement.executeUpdate();
                 statement.close();
             }

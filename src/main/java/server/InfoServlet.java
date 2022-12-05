@@ -55,7 +55,7 @@ public class InfoServlet extends HttpServlet {
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("templates/info.html");
+        Template template = ve.getTemplate("static/templates/info.html");
         context.put("error", error);
         context.put("username", username);
         context.put("hotelSearch", hotelSearch);

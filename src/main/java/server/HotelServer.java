@@ -60,7 +60,7 @@ public class HotelServer {
         // ********************** set up resource handler for js **********************
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setResourceBase("templates");
+        resourceHandler.setResourceBase("static");
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[] { resourceHandler, serverHandler });
