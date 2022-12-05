@@ -3,44 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Review</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../style.css">
 </head>
+
 <body>
+    #if ($username)
+    <script id="replaceWithUserNavbar" src="user-navbar.js"></script>
+    #else
+    <script id="replaceWithVisitNavbar" src="visit-navbar.js"></script>
+    #end
 
-    <h3>Edit Review</h3>
-    <p>$hotelName</p>
-    <form method="post" action="/edit-review">
-        <input type="hidden" name="hotelSearch" value="$hotelSearch">
-        <input type="hidden" name="hotelid" value="$hotelid">
-        <input type="hidden" name="hotelName" value="$hotelName">
-        <p>Rating:
-        #if ($editRating == 1) <label><input type="radio" name="edit-rating" value="1" required checked >1</label>
-            #else <label><input type="radio" name="edit-rating" value="1" required>1</label> #end
-        #if ($editRating == 2) <label><input type="radio" name="edit-rating" value="2" checked >2</label>
-            #else <label><input type="radio" name="edit-rating" value="2">2</label> #end
-        #if ($editRating == 3) <label><input type="radio" name="edit-rating" value="3" checked >3</label>
-            #else <label><input type="radio" name="edit-rating" value="3">3</label> #end
-        #if ($editRating == 4) <label><input type="radio" name="edit-rating" value="4" checked >4</label>
-            #else <label><input type="radio" name="edit-rating" value="4">4</label> #end
-        #if ($editRating == 5) <label><input type="radio" name="edit-rating" value="5" checked >5</label>
-            #else <label><input type="radio" name="edit-rating" value="5">5</label> #end </p>
-        <p>Title: <input type="text" name="edit-title" size="35" value="$editTitle" placeholder="Title"></p>
-        Review Text:<br>
-        <textarea name="edit-text" rows="6" cols="40" maxlength="1600" placeholder="Review">$editText</textarea>
-        <input type="hidden" name="modify" value="edit">
-        <p><input type="submit" value="Update Review"></p>
-    </form>
-    <form method="post" action="/edit-review">
-        <input type="hidden" name="hotelSearch" value="$hotelSearch">
-        <input type="hidden" name="hotelid" value="$hotelid">
-        <input type="hidden" name="hotelName" value="$hotelName">
-        <input type="hidden" name="modify" value="delete">
-        <p><input type="submit" value="Delete Review"></p>
-    </form>
-    <form method="get" action="/info">
-        <input type="hidden" name="hotelSearch" value="$hotelSearch">
-        <input type="hidden" name="hotelName" value="$hotelName">
-        <p><input type="submit" value="Back"></p>
-    </form>
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col-sm-2 sidenav"></div>
+            <div class="col-sm-8 fill">
+                <br><h3 class="fw-light">$hotelName</h3><hr>
 
+                #if ($username)
+                <div class="text-start">
+                    <br><form method="post" action="/edit-review" id="update-review">
+                        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                        <input type="hidden" name="hotelid" value="$hotelid">
+                        <input type="hidden" name="hotelName" value="$hotelName">
+                        <input type="hidden" name="modify" value="edit">
+
+                        <h5 class="fw-light">Edit your review:</h5>
+                        <p><select class="form-select" name="edit-rating">
+                            #if ($editRating == 1) <option value="1" selected>1</option> #else <option value="1">1</option> #end
+                            #if ($editRating == 2) <option value="2" selected>2</option> #else <option value="2">2</option> #end
+                            #if ($editRating == 3) <option value="3" selected>3</option> #else <option value="3">3</option> #end
+                            #if ($editRating == 4) <option value="4" selected>4</option> #else <option value="4">4</option> #end
+                            #if ($editRating == 5) <option value="5" selected>5</option> #else <option value="5">5</option> #end
+                        </select></p>
+
+                        <p><input class="form-control" name="edit-title" value="$editTitle" placeholder="Summarize your experience"></p>
+                        <textarea class="form-control text-start" rows="6" maxlength="1600"
+                                  name="edit-text" placeholder="Leave a review...">$editText</textarea><br>
+                    </form>
+                </div>
+
+                <div class="btn-toolbar" style="justify-content: center;">
+                    <button type="submit" class="btn btn-outline-success me-3" form="update-review">Update Review</button>
+                    <form method="post" action="/edit-review">
+                        <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                        <input type="hidden" name="hotelid" value="$hotelid">
+                        <input type="hidden" name="hotelName" value="$hotelName">
+                        <input type="hidden" name="modify" value="delete">
+                        <button type="submit" class="btn btn-outline-dark">Delete Review</button>
+                    </form>
+                </div><br>
+
+                #else
+                <div class="btn-toolbar" style="justify-content: center;">
+                <button type="submit" class="btn btn-outline-success me-3"
+                        data-bs-toggle="modal" data-bs-target="#login">Update Review</button>
+                <button type="submit" class="btn btn-outline-dark"
+                        data-bs-toggle="modal" data-bs-target="#login">Delete Review</button>
+                </div><br>
+                #end
+
+                <div class="text-center">
+                <form method="get" action="/info">
+                    <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                    <input type="hidden" name="hotelName" value="$hotelName">
+                    <button type="submit" class="btn btn-outline-danger me-3">Back</button>
+                </form>
+                </div>
+            </div>
+            <div class="col-sm-2 sidenav"></div>
+        </div>
+    </div>
+
+    <footer class="container-fluid text-center">
+        <p>~</p>
+    </footer>
 </body>
 </html>

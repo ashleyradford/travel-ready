@@ -3,64 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>$hotelName</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../style.css">
 </head>
+
 <body>
     #if ($username)
-    <p>$hotel.getName() ~ $hotel.getHotelid()</p>
-    <p>$hotel.getStreet(), $hotel.getCity(), $hotel.getState()</p>
-
-    #if ($avgRating)
-        <p>Average Rating: $avgRating</p>
+    <script id="replaceWithUserNavbar" src="user-navbar.js"></script>
     #else
-        <p>Average Rating: N/A</p>
+    <script id="replaceWithVisitNavbar" src="visit-navbar.js"></script>
     #end
 
-    #set ($url = $hotel.getCity() + "-Hotels-" + $hotel.getName() + ".h" + $hotel.getHotelid() + ".Hotel-Information")
-    <p><a href="https://www.expedia.com/$url" target="_blank" rel="noopener noreferrer">$hotelName</a></p>
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col-sm-2 sidenav"></div>
+            <div class="col-sm-8 fill">
+                <div class="container mt-3">
+                    <div class="mt-4 p-5 bg-info text-dark rounded fw-light">
+                        <h3 class="fw-light">$hotel.getName()</h3><br>
+                        <p>ID: $hotel.getHotelid()</p>
+                        <p>$hotel.getStreet(), $hotel.getCity(), $hotel.getState()</p>
 
-    #if ($reviewList.size() == 0)
-        <p>No reviews yet. Want to add one?</p>
-    #end
-    <form method="get" action="/add-review">
-        <input type="hidden" name="hotelSearch" value="$hotelSearch">
-        <input type="hidden" name="hotelName" value="$hotelName">
-        <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
-        <p><input type="submit" value="Add Review"></p>
-    </form>
+                        #if ($avgRating)
+                        <p>Average Rating: $avgRating</p>
+                        #else
+                        <p>Average Rating: N/A</p>
+                        #end
 
-    #if ($error == "dup")
-    <p style="color:#FF0000">Users may only submit one review per hotel.</p>
-    #end
+                        #set ($url = $hotel.getCity() + "-Hotels-" + $hotel.getName() + ".h" + $hotel.getHotelid() + ".Hotel-Information")
+                        <p><a href="https://www.expedia.com/$url" target="_blank" rel="noopener noreferrer">See on Expedia</a></p>
+                        <p>$reviewList.size() reviews</p>
+                    </div><br>
 
-    <form method="get" action="/home">
-        <input type="hidden" name="hotelSearch" value="$hotelSearch">
-        <p><input type="submit" value="Back"></p><br>
-    </form>
+                    <!-- Showing all reviews if there are any -->
+                    #if ($reviewList.size() == 0)
+                    <p>No reviews yet. Want to add one?</p>
+                    #end
 
-    <b>$reviewList.size() reviews</b>
-    #foreach ($review in $reviewList)
-        <p><b>Rating:</b> $review.getRating()</p>
-        <p><b>Title:</b> $review.getTitle()</p>
-        <p><b>By:</b> $review.getUsername() on $review.getSubmissionDate()</p>
-        <p>$review.getText()</p>
-        #if ($review.getUsername() == $username)
-            <form method="get" action="/edit-review">
-                <input type="hidden" name="hotelSearch" value="$hotelSearch">
-                <input type="hidden" name="hotelName" value="$hotelName">
-                <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
-                <input type="submit" value="Edit"><br>
-            </form>
-        #end<br>
-    #end
+                    <div class="btn-toolbar" style="justify-content: center;">
+                        <form method="get" action="/home">
+                            <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                            <button type="submit" class="btn btn-outline-danger me-3">Back</button>
+                        </form>
 
-    #else
-    <h3>Please login or create new account.</h3>
-    <form method="get" action="/login">
-        <p><input type="submit" value="Login"></p>
-    </form>
-    <form method="get" action="/registration">
-        <p><input type="submit" value="Register"></p>
-    </form>
-    #end
+                        #if ($username)
+                        <form method="get" action="/add-review">
+                            <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                            <input type="hidden" name="hotelName" value="$hotelName">
+                            <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
+                            <button type="submit" class="btn btn-outline-secondary">Add Review</button>
+                        </form>
+                        #else
+                        <button type="submit" class="btn btn-outline-secondary"
+                                data-bs-toggle="modal" data-bs-target="#login">Add Review</button>
+                        #end
+                    </div><br>
+
+                    #if ($error == "dup")
+                    <p style="color:#FF0000">Users may only submit one review per hotel.</p>
+                    #end
+
+                    <div class="text-start">
+                    #foreach ($review in $reviewList)<hr>
+                    <p><b>$review.getRating() stars ~</b> $review.getTitle()</p>
+                    <p><b>Written by:</b> $review.getUsername()</p>
+                    <p class="fw-light">$review.getSubmissionDate()</p>
+                    <p class="fw-light">$review.getText()</p><br>
+                        #if ($review.getUsername() == $username)
+                        <form method="get" action="/edit-review">
+                            <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                            <input type="hidden" name="hotelName" value="$hotelName">
+                            <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
+                            <button type="submit" class="btn btn-outline-success smoll">Edit</button>
+                        </form>
+                        #end
+                    #end
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 sidenav"></div>
+        </div>
+    </div>
+
+    <footer class="container-fluid text-center">
+        <p>~</p>
+    </footer>
 </body>
 </html>

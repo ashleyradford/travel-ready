@@ -4,6 +4,19 @@ a.results:visited { text-decoration: none; }
 a.results:hover { text-decoration: underline; }
 a.results:active { text-decoration: underline; }
 
+/* fills vertical space */
+.fill {
+    min-height: 90vh;
+}
+
+.forms {
+  display:flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
 /* gray background color with 100% height */
 .sidenav {
     padding-top: 20px;
@@ -11,14 +24,14 @@ a.results:active { text-decoration: underline; }
 }
 
 /* smaller button with text centered */
-.btn {
+.smoll {
     height: 30px;
     line-height: 15px;
 }
 
-/* stretch out search  bar */
-.search {
-    width: 75%;
+/* center buttons */
+.btn-toolbar {
+  text-align: center;
 }
 
 /* black footer, white text and some padding */

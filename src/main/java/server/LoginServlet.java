@@ -32,8 +32,9 @@ public class LoginServlet extends HttpServlet {
         String status = request.getParameter("session");
         status = StringEscapeUtils.escapeHtml4(status);
         if (status != null && status.equals("end")) {
-            session.invalidate();
             username = null;
+            session.invalidate();
+            response.sendRedirect("/home");
         }
 
         // user must log out first before they can log in again
@@ -43,10 +44,6 @@ public class LoginServlet extends HttpServlet {
         // check if user was redirected here because of failed authentication
         String auth = request.getParameter("auth");
         auth = StringEscapeUtils.escapeHtml4(auth);
-
-        // user has not logged in yet
-        if (auth == null)
-           auth = "pending";
 
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");

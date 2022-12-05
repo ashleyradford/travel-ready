@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+        <ul class="navbar-nav">
+            <a class="navbar-brand fw-light">Travel Ready</a>
+            <li class="nav-item">
+                <a class="nav-link fw-light" href="/home">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">Favorites</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">Reviews</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">History</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav navbar-right">
+            <li class="nav-item dropdown">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a type="button" class="dropdown-item" href="/login">Login</a></li>
+                    <li><a type="button" class="dropdown-item" href="/registration">Register</a></li>
+                </ul>
+        </ul>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Unable to view content</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Limited to registered users only, please login or create an account.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
