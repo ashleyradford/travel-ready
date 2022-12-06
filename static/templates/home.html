@@ -9,44 +9,41 @@
 </head>
 
 <body>
-    #if ($username)
-    <script id="replaceWithUserNavbar" src="user-navbar.js"></script>
-    #else
-    <script id="replaceWithVisitNavbar" src="visit-navbar.js"></script>
-    #end
+    #parse("static/templates/navbar.html")
 
     <div class="container-fluid text-center">
         <div class="row">
             <div class="col-sm-2 sidenav"></div>
             <div class="col-sm-8 fill">
-                <br>
-                <h1>Welcome</h1>
+                <br><h1>Welcome</h1>
                 #if ($username)
-                <p class="fw-light">Hi $username, ready for vacation?</p>
-                #else
-                <p class="fw-light">Ready for vacation?</p>
-                #end
+                    <p class="fw-light">Hi $username, ready for vacation?</p>
+                    <form method="get" action="/home">
+                        <div class="input-group">
+                        <input type="text" name="hotelSearch" class="form-control" value="$hotelSearch" placeholder="Enter hotel name">
+                        <button type="button" class="btn btn-primary">Search</button>
+                        </div>
+                    </form><br>
 
-                <form method="get" action="/home">
-                    <div class="input-group">
-                    <input type="text" name="hotelSearch" class="form-control" value="$hotelSearch" placeholder="Enter hotel name">
-                    <button type="button" class="btn btn-primary">Search</button>
-                    </div>
-                </form><br>
-
-                <h3>Hotels</h3>
-                <hr>
-                #set ($i = 1)
-                #if ($matchedHotels.size() > 0)
-                    #foreach ($hotelName in $matchedHotels)
-                    #set( $hotelNameParsed = $hotelName.replace("&", "%26") )
-                    <p>$i. <a href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed"
-                              style="color: black"
-                              class="results fw-light">$hotelName</a></p>
-                    #set ($i = $i + 1)
+                    <h3>Hotels</h3>
+                    <hr>
+                    #set ($i = 1)
+                    #if ($matchedHotels.size() > 0)
+                        #foreach ($hotelName in $matchedHotels)
+                        #set( $hotelNameParsed = $hotelName.replace("&", "%26") )
+                        <p>$i. <a href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed"
+                                  style="color: black"
+                                  class="results fw-light">$hotelName</a></p>
+                        #set ($i = $i + 1)
+                        #end
+                    #else
+                    <p>Sorry, no results.</p>
                     #end
                 #else
-                <p>Sorry, no results.</p>
+                    <p class="fw-light">Ready for a vacation?</p>
+                    <hr><br><p class="fw-light">Login or create an account to get started.</p><br>
+                    <p><a type="button" class="btn btn-outline-primary" href="/login">Existing User</a></p>
+                    <p><a type="button" class="btn btn-outline-success" href="/registration">New User</a></p>
                 #end
             </div>
             <div class="col-sm-2 sidenav"></div>
