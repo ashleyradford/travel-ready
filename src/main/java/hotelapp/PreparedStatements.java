@@ -46,6 +46,14 @@ public class PreparedStatements {
                     "hotelid INTEGER NOT NULL, " +
                     "event_date DATETIME NOT NULL);";
 
+    // creates travel_favorites table
+    public static final String CREATE_FAVORITES_TABLE =
+            "CREATE TABLE IF NOT EXISTS travel_favorites (" +
+                    "id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+                    "username VARCHAR(32) NOT NULL, " +
+                    "hotelid INTEGER NOT NULL, " +
+                    "event_date DATETIME NOT NULL);";
+
     // inserts user to travel_users table
     public static final String INSERT_USER =
             "INSERT INTO travel_users (username, password, usersalt) " +
@@ -89,6 +97,18 @@ public class PreparedStatements {
     // update login time
     public static final String UPDATE_LOGIN_TIME =
             "UPDATE travel_users SET last_login = ? WHERE username = ?;";
+
+    // inserts a new favorite hotel for a given user
+    public static final String INSERT_FAVORITE =
+            "INSERT INTO travel_favorites (username, hotelid, event_date) VALUES (?, ?, ?);";
+
+    // deletes a given user favorite
+    public static final String DELETE_FAVORITE =
+            "DELETE FROM travel_favorites WHERE username = ? AND hotelid = ?";
+
+    // deletes all favorites of a given user
+    public static final String CLEAR_FAVORITES =
+            "DELETE FROM travel_favorites WHERE username = ?";
 
     /** ------------------------------------ SQL QUERIES ------------------------------------ */
 
@@ -154,7 +174,19 @@ public class PreparedStatements {
                     "GROUP BY travel_history.username, travel_history.expedia_link " +
                     "ORDER BY latest_event_date DESC;";
 
+    // selects all fav events for a given user
+    public static final String SELECT_FAV_EVENTS =
+            "SELECT travel_favorites.hotelid, travel_hotels.name, travel_favorites.event_date " +
+                    "FROM travel_favorites " +
+                    "LEFT JOIN travel_hotels ON travel_hotels.hotelid = travel_favorites.hotelid " +
+                    "WHERE travel_favorites.username = ? " +
+                    "ORDER BY travel_favorites.event_date DESC;";
+
     // selects the last successful login time for a given user
     public static final String SELECT_LAST_LOGIN =
             "SELECT last_login FROM travel_users WHERE username = ?;";
+
+    // selects hotelid if hotel is favorited by user
+    public static final String SELECT_FAV_HOTEL =
+            "SELECT hotelid FROM travel_favorites WHERE username = ? AND hotelid = ?;";
 }

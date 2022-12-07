@@ -1,9 +1,8 @@
 package server;
 
-import hotelapp.Hotel;
+import hotelapp.FavEvent;
 import hotelapp.HotelDB;
-import hotelapp.Review;
-import org.apache.commons.text.StringEscapeUtils;
+import hotelapp.LinkEvent;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,7 +17,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
-public class InfoServlet extends HttpServlet {
+public class FavoritesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,36 +34,17 @@ public class InfoServlet extends HttpServlet {
         // redirect if not logged in
         if (username == null) response.sendRedirect("/home");
 
-        // grab and clean parameters
-        String hotelSearch = request.getParameter("hotelSearch");
-        hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
-        if (hotelSearch == null) hotelSearch = "";
-        String hotelName = request.getParameter("hotelName");
-        hotelName = StringEscapeUtils.escapeHtml4(hotelName);
-        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&");
-        String error = request.getParameter("error");
-        error = StringEscapeUtils.escapeHtml4(error);
-
-        // grab hotel data for template
+        // get links and add to a list
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
-        Hotel hotel = hotelDB.getHotelByName(hotelName);
-        // set favorite if hotel is favorited
-        if (hotelDB.checkFavorite(username, hotel.getHotelid())) hotel.setFavorite();
-        String avgRating = hotelDB.getAvgRating(hotelName);
-        List<Review> reviewList = hotelDB.getHotelReviews(hotelName);
+        List<FavEvent> favEvents = hotelDB.getFavEvents(username);
 
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("static/info.html");
+        Template template = ve.getTemplate("static/favorites.html");
         context.put("username", username);
-        context.put("hotelSearch", hotelSearch);
-        context.put("hotelName", hotelName);
-        context.put("hotel", hotel);
-        context.put("avgRating", avgRating);
-        context.put("reviewList", reviewList);
-        context.put("error", error);
+        context.put("favEvents", favEvents);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);

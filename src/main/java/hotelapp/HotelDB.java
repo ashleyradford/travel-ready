@@ -60,6 +60,9 @@ public class HotelDB {
                 case "travel_history":
                     statement.executeUpdate(PreparedStatements.CREATE_HISTORY_TABLE);
                     break;
+                case "travel_favorites":
+                    statement.executeUpdate(PreparedStatements.CREATE_FAVORITES_TABLE);
+                    break;
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -279,6 +282,28 @@ public class HotelDB {
     }
 
     /**
+     * Adds a favorite hotel for a given user
+     * @param username username
+     * @param hotelid hotel id
+     * @return true if successfully added, false otherwise
+     */
+    public boolean addUserFavorite(String username, String hotelid , String eventDate) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.INSERT_FAVORITE);
+            statement.setString(1, username);
+            statement.setString(2, hotelid);
+            statement.setString(3, eventDate);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding favorite hotel: " + e);
+            return false;
+        }
+    }
+
+    /**
      * Adds a link event to sql database
      * @param eventid random UUID
      * @param expediaLink expedia link
@@ -309,7 +334,7 @@ public class HotelDB {
      * @param username username
      * @return true if successfully deleted, false otherwise
      */
-    public boolean deleteUserHistory(String username) {
+    public boolean clearUserHistory(String username) {
         PreparedStatement statement;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
             statement = connection.prepareStatement(PreparedStatements.CLEAR_HISTORY);
@@ -319,6 +344,46 @@ public class HotelDB {
             return true;
         } catch (SQLException e) {
             System.out.println("SQLException when deleting user history: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a given user favorite
+     * @param username username
+     * @param hotelid hotelid
+     * @return true if successfully deleted, false otherwise
+     */
+    public boolean deleteUserFavorite(String username, String hotelid) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.DELETE_FAVORITE);
+            statement.setString(1, username);
+            statement.setString(2, hotelid);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when deleting user favorite: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * Deletes all favorites of a given user
+     * @param username username
+     * @return true if successfully deleted, false otherwise
+     */
+    public boolean clearUserFavorites(String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.CLEAR_FAVORITES);
+            statement.setString(1, username);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when deleting all favorites: " + e);
             return false;
         }
     }
@@ -569,6 +634,31 @@ public class HotelDB {
     }
 
     /**
+     * Retrieves all fav events for a given username
+     * @param username username
+     * @return list of fav events
+     */
+    public List<FavEvent> getFavEvents(String username) {
+        PreparedStatement statement;
+        List<FavEvent> favEvents = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_FAV_EVENTS);
+            statement.setString(1, username);
+
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                FavEvent favEvent = new FavEvent(results.getString("hotelid"),
+                        results.getString("name"),
+                        results.getString("event_date"));
+                favEvents.add(favEvent);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return favEvents;
+    }
+
+    /**
      * Gets the last login time for a given username
      * @param username username
      * @return login time as string
@@ -586,6 +676,26 @@ public class HotelDB {
             System.out.println(e);
         }
         return null;
+    }
+
+    /**
+     * Checks if hotel is favorited by a given user
+     * @param username username
+     * @param hotelid hotelid
+     * @return true if favorited, false otherwise
+     */
+    public boolean checkFavorite(String username, String hotelid) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_FAV_HOTEL);
+            statement.setString(1, username);
+            statement.setString(2, hotelid);
+            ResultSet results = statement.executeQuery();
+            return results.next();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
     }
 
     /**

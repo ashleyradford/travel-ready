@@ -1,6 +1,6 @@
 package server;
 
-import hotelapp.Hotel;
+import com.google.gson.JsonObject;
 import hotelapp.HotelDB;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -10,14 +10,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-public class LinkHelperServlet extends HttpServlet {
+public class FavHelperServlet extends HttpServlet {
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
+        PrintWriter out = response.getWriter();
+        JsonObject favObj = new JsonObject();
 
         // grab session data
         HttpSession session = request.getSession();
@@ -29,25 +34,26 @@ public class LinkHelperServlet extends HttpServlet {
         String clear = request.getParameter("clear");
         clear = StringEscapeUtils.escapeHtml4(clear);
 
-        // clear history and redirect back to /history
+        LocalDateTime eventDate = LocalDateTime.now();
+
+        // clear favorites and redirect back to /favorite
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         if (clear != null && clear.equals("true")) {
-            hotelDB.clearUserHistory(username);
-            response.sendRedirect("/history");
+            hotelDB.clearUserFavorites(username);
+            response.sendRedirect("/favorites");
             return;
         }
 
-        // generate event UUID and date time
-        UUID eventUUID = UUID.randomUUID();
-        String eventid = eventUUID.toString().replaceAll("-", "");
-        LocalDateTime eventDate = LocalDateTime.now();
+        // delete or add favorite
+        boolean isFav = hotelDB.checkFavorite(username, hotelid);
+        if (isFav) {
+            hotelDB.deleteUserFavorite(username, hotelid);
+            favObj.addProperty("fav", false);
+        } else {
+            hotelDB.addUserFavorite(username, hotelid, eventDate.toString());
+            favObj.addProperty("fav", true);
+        }
 
-        // add link to database
-        Hotel hotel = hotelDB.getHotelById(hotelid);
-        String expediaUrl = hotel.generateExpediaUrl();
-        hotelDB.addLinkEvent(eventid, expediaUrl, username, Integer.parseInt(hotelid), eventDate.toString());
-
-        // redirect to expedia page
-        response.sendRedirect(expediaUrl);
+        out.println(favObj);
     }
 }

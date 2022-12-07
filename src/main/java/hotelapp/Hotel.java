@@ -9,6 +9,7 @@ public class Hotel {
     private final String state;
     private final String latitude;
     private final String longitude;
+    private boolean favorite = false;
 
     /**
      * Constructor for Hotel class
@@ -57,6 +58,14 @@ public class Hotel {
 
     public String getLongitude() {
         return longitude;
+    }
+
+    public void setFavorite() {
+        favorite = true;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
     }
 
     /**
