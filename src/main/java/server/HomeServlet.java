@@ -37,9 +37,11 @@ public class HomeServlet extends HttpServlet {
 
         // perform the hotel search if user is logged in
         List<String> matchedHotels = null;
+        String lastLogin = null;
         if (username != null) {
             HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
             matchedHotels = hotelDB.findHotelNames(hotelSearch);
+            lastLogin = hotelDB.getLastLogin(username);
         }
 
         // set up velocity template and its context
@@ -50,6 +52,7 @@ public class HomeServlet extends HttpServlet {
         context.put("username", username);
         context.put("hotelSearch", hotelSearch);
         context.put("matchedHotels", matchedHotels);
+        context.put("lastLogin", lastLogin);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);

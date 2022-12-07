@@ -16,7 +16,12 @@
             <div class="col-sm-8 fill">
                 <br><h1>Welcome</h1>
                 #if ($username)
-                    <p class="fw-light">Hi $username, ready for vacation?</p>
+                    <p class="fw-light fs-5">
+                        Hi $username, ready for vacation?
+                        #if ($lastLogin)
+                        <br><span class="fw-light text-secondary" style="font-size:15px">Last login: $lastLogin</span>
+                        #end
+                    </p>
                     <form method="get" action="/home">
                         <div class="input-group">
                         <input type="text" name="hotelSearch" class="form-control" value="$hotelSearch" placeholder="Enter hotel name">

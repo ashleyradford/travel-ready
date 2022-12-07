@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 
 public class LoginServlet extends HttpServlet {
 
@@ -33,9 +34,11 @@ public class LoginServlet extends HttpServlet {
         String status = request.getParameter("status");
         status = StringEscapeUtils.escapeHtml4(status);
         if (status != null && status.equals("end")) {
-            username = null;
+            HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
+            hotelDB.setLoginTime((String) session.getAttribute("loginTime"), username);
             session.invalidate();
             response.sendRedirect("/home");
+            return;
         }
 
         // redirect if user is already logged in
@@ -69,12 +72,15 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("pass");
         password = StringEscapeUtils.escapeHtml4(password);
 
+        LocalDateTime loginTime = LocalDateTime.now();
+
         // authenticate username and password
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         if (hotelDB.authenticateUser(username, password)) {
             // set session username
             HttpSession session = request.getSession();
             session.setAttribute("username", username);
+            session.setAttribute("loginTime", loginTime.toString());
             response.sendRedirect("/home");
         } else {
             response.sendRedirect("/login?auth=failed");

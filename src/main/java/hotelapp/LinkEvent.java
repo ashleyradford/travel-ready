@@ -4,11 +4,13 @@ public class LinkEvent {
     private final String hotelName;
     private final String expediaLink;
     private final String eventDate;
+    private final String visitCount;
 
-    public LinkEvent(String hotelName, String expediaLink, String eventDate) {
+    public LinkEvent(String hotelName, String expediaLink, String eventDate, String visitCount) {
         this.hotelName = hotelName;
         this.expediaLink = expediaLink;
         this.eventDate = eventDate;
+        this.visitCount = visitCount;
     }
 
     public String getHotelName() {
@@ -21,5 +23,9 @@ public class LinkEvent {
 
     public String getEventDate() {
         return eventDate;
+    }
+
+    public String getVisitCount() {
+        return visitCount;
     }
 }

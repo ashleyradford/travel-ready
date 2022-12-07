@@ -11,7 +11,8 @@ public class PreparedStatements {
                     "userid INTEGER AUTO_INCREMENT PRIMARY KEY, " +
                     "username VARCHAR(32) NOT NULL UNIQUE, " +
                     "password CHAR(64) NOT NULL, " +
-                    "usersalt CHAR(32) NOT NULL);";
+                    "usersalt CHAR(32) NOT NULL, " +
+                    "last_login DATETIME);";
 
     // creates travel_hotels table
     public static final String CREATE_HOTELS_TABLE =
@@ -20,8 +21,8 @@ public class PreparedStatements {
                     "name VARCHAR(100) NOT NULL UNIQUE, " +
                     "street VARCHAR(50) NOT NULL, " +
                     "city VARCHAR(50) NOT NULL, " +
-                    "state VARCHAR(50) NOT NULL," +
-                    "latitude VARCHAR(50) NOT NULL," +
+                    "state VARCHAR(50) NOT NULL, " +
+                    "latitude VARCHAR(50) NOT NULL, " +
                     "longitude VARCHAR(50) NOT NULL);";
 
     // creates travel_reviews table
@@ -33,7 +34,7 @@ public class PreparedStatements {
                     "rating INTEGER NOT NULL, " +
                     "title VARCHAR(50) NOT NULL, " +
                     "text VARCHAR(1600) NOT NULL, " +
-                    "submission_date DATETIME NOT NULL," +
+                    "submission_date DATETIME NOT NULL, " +
                     "UNIQUE KEY hotel_user (hotelid, username));";
 
     // creates travel_history table
@@ -84,6 +85,10 @@ public class PreparedStatements {
     // clear the expedia links
     public static final String CLEAR_HISTORY =
             "DELETE FROM travel_history WHERE username = ?";
+
+    // update login time
+    public static final String UPDATE_LOGIN_TIME =
+            "UPDATE travel_users SET last_login = ? WHERE username = ?;";
 
     /** ------------------------------------ SQL QUERIES ------------------------------------ */
 
@@ -138,12 +143,18 @@ public class PreparedStatements {
             "SELECT reviewid, hotelid, username, rating, title, text, submission_date " +
                     "FROM travel_reviews WHERE hotelid = ? AND username = ?";
 
+    // selects all link events for a given user
     public static final String SELECT_USER_LINKS =
             "SELECT travel_hotels.name, travel_history.expedia_link, " +
-                    "MAX(travel_history.event_date) AS latest_event_date " +
+                    "MAX(travel_history.event_date) AS latest_event_date, " +
+                    "COUNT(travel_history.expedia_link) AS visit_count " +
                     "FROM travel_history " +
                     "LEFT JOIN travel_hotels ON travel_hotels.hotelid = travel_history.hotelid " +
                     "WHERE travel_history.username = ? " +
                     "GROUP BY travel_history.username, travel_history.expedia_link " +
                     "ORDER BY latest_event_date DESC;";
+
+    // selects the last successful login time for a given user
+    public static final String SELECT_LAST_LOGIN =
+            "SELECT last_login FROM travel_users WHERE username = ?;";
 }

@@ -323,6 +323,19 @@ public class HotelDB {
         }
     }
 
+    public void setLoginTime(String loginTime, String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.UPDATE_LOGIN_TIME);
+            statement.setString(1, loginTime);
+            statement.setString(2, username);
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("SQLException when setting login time: " + e);
+        }
+    }
+
     // ------------------------------------ SQL QUERIES ------------------------------------ //
 
     /**
@@ -528,6 +541,11 @@ public class HotelDB {
         return review;
     }
 
+    /**
+     * Retrieves all link events for a given username
+     * @param username username
+     * @return list of link events
+     */
     public List<LinkEvent> getLinkEvents(String username) {
         PreparedStatement statement;
         List<LinkEvent> linkEvents = new ArrayList<>();
@@ -539,15 +557,34 @@ public class HotelDB {
             while (results.next()) {
                 LinkEvent linkEvent = new LinkEvent(results.getString("name"),
                         results.getString("expedia_link"),
-                        results.getString("latest_event_date"));
+                        results.getString("latest_event_date"),
+                        results.getString("visit_count"));
                 linkEvents.add(linkEvent);
             }
-
-
         } catch (SQLException e) {
             System.out.println(e);
         }
         return linkEvents;
+    }
+
+    /**
+     * Gets the last login time for a given username
+     * @param username username
+     * @return login time as string
+     */
+    public String getLastLogin(String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_LAST_LOGIN);
+            statement.setString(1, username);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                return results.getString("last_login");
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     /**
