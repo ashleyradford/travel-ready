@@ -9,29 +9,30 @@ a.results:active { text-decoration: underline; }
     min-height: 90vh;
 }
 
-.forms {
-  display:flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-/* gray background color with 100% height */
-.sidenav {
-    padding-top: 20px;
-    background-color: #F1F1F1;
-}
-
 /* smaller button with text centered */
 .smoll {
     height: 30px;
     line-height: 15px;
 }
 
-/* center buttons */
+/* center the button toolbars */
 .btn-toolbar {
   text-align: center;
+}
+
+/* left and right side navs grey with 100% height */
+.sidenav {
+    padding-top: 20px;
+    background-color: #F1F1F1;
+}
+
+/* smaller login and register text boxes */
+.forms {
+  display:flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 /* black footer, white text and some padding */

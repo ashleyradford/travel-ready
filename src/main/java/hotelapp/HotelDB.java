@@ -555,7 +555,8 @@ public class HotelDB {
 
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                LinkEvent linkEvent = new LinkEvent(results.getString("name"),
+                LinkEvent linkEvent = new LinkEvent(results.getString("hotelid"),
+                        results.getString("name"),
                         results.getString("expedia_link"),
                         results.getString("latest_event_date"),
                         results.getString("visit_count"));

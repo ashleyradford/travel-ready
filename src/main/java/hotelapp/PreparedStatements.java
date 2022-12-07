@@ -145,7 +145,7 @@ public class PreparedStatements {
 
     // selects all link events for a given user
     public static final String SELECT_USER_LINKS =
-            "SELECT travel_hotels.name, travel_history.expedia_link, " +
+            "SELECT travel_history.hotelid, travel_hotels.name, travel_history.expedia_link, " +
                     "MAX(travel_history.event_date) AS latest_event_date, " +
                     "COUNT(travel_history.expedia_link) AS visit_count " +
                     "FROM travel_history " +

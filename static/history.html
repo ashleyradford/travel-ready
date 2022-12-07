@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col-sm-2 sidenav"></div>
             <div class="col-sm-8 fill">
-                <br><h4 class="fw-light">Expedia history for $username</h4><br>
+                <br><h4 class="fw-light">Expedia history for <span class="text-info">$username</span></h4><br>
                 <table class="table">
                     <thead>
                     <tr>
@@ -28,7 +28,8 @@
                         #foreach ($link in $linkEvents)
                         <tr>
                             <td class="fw-light">$link.getHotelName()</td>
-                            <td class="fw-light"><a href="$link.getExpediaLink()" target="_blank" rel="noopener noreferrer">Visit on Expedia</a></td>
+                            <td class="fw-light"><a href="/link-helper?hotelid=$link.getHotelid()" target="_blank"
+                                                    rel="noopener noreferrer">Visit on Expedia</a></td>
                             <td class="fw-light">$link.getVisitCount()</td>
                             <td class="fw-light">$link.getEventDate()</td>
                         </tr>

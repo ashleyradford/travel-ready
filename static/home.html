@@ -17,7 +17,7 @@
                 <br><h1>Welcome</h1>
                 #if ($username)
                     <p class="fw-light fs-5">
-                        Hi $username, ready for vacation?
+                        Hi <span class="text-info">$username</span>, ready for vacation?
                         #if ($lastLogin)
                         <br><span class="fw-light text-secondary" style="font-size:15px">Last login: $lastLogin</span>
                         #end
