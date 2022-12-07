@@ -57,6 +57,9 @@ public class HotelDB {
                 case "travel_reviews":
                     statement.executeUpdate(PreparedStatements.CREATE_REVIEWS_TABLE);
                     break;
+                case "travel_history":
+                    statement.executeUpdate(PreparedStatements.CREATE_HISTORY_TABLE);
+                    break;
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -170,13 +173,13 @@ public class HotelDB {
 
     /**
      * Adds a review to sql database
-     * @param reviewid review id
+     * @param reviewid random UUID
      * @param hotelid hotel id
      * @param username nickname
      * @param rating user rating
      * @param title user title
      * @param text user review
-     * @param submission_date user submission date
+     * @param submission_date local date time
      * @return true if successfully added, false otherwise
      */
     public boolean addReview(String reviewid, String hotelid, String username, String rating,
@@ -225,13 +228,13 @@ public class HotelDB {
     }
 
     /**
-     * Updates a given users review
+     * Updates a given user review
      * @param hotelid hotel id
      * @param username username
      * @param rating edit rating
      * @param title edit title
      * @param text edit text
-     * @param submissionDate edit date
+     * @param submissionDate local date time
      * @return true if successfully updated, false otherwise
      */
     public boolean updateUserReview(String hotelid, String username, String rating, String title,
@@ -255,7 +258,7 @@ public class HotelDB {
     }
 
     /**
-     * Updates a given users review
+     * Deletes a given user review
      * @param hotelid hotel id
      * @param username username
      * @return true if successfully deleted, false otherwise
@@ -271,6 +274,51 @@ public class HotelDB {
             return true;
         } catch (SQLException e) {
             System.out.println("SQLException when deleting user review: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * Adds a link event to sql database
+     * @param eventid random UUID
+     * @param expediaLink expedia link
+     * @param username username
+     * @param eventDate local date time
+     * @return true if successfully added, false otherwise
+     */
+    public boolean addLinkEvent(String eventid, String expediaLink, String username, int hotelid, String eventDate) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.INSERT_LINK_EVENT);
+            statement.setString(1, eventid);
+            statement.setString(2, expediaLink);
+            statement.setString(3, username);
+            statement.setInt(4, hotelid);
+            statement.setString(5, eventDate);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when adding link event: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a given user's history
+     * @param username username
+     * @return true if successfully deleted, false otherwise
+     */
+    public boolean deleteUserHistory(String username) {
+        PreparedStatement statement;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.CLEAR_HISTORY);
+            statement.setString(1, username);
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLException when deleting user history: " + e);
             return false;
         }
     }
@@ -324,11 +372,11 @@ public class HotelDB {
      * @param name keyword
      * @return list of hotel names
      */
-    public List<String> findHotels(String name) {
+    public List<String> findHotelNames(String name) {
         PreparedStatement statement;
         List<String> hotels = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
-            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL);
+            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_NAME);
             statement.setString(1, "%" + name + "%");
 
             ResultSet results = statement.executeQuery();
@@ -342,15 +390,43 @@ public class HotelDB {
     }
 
     /**
-     * Retrieves hotel data from sql database
-     * @param name hotel name
+     * Retrieves hotel data from sql database using hotel id
+     * @param hotelid hotel id
      * @return Hotel object
      */
-    public Hotel getHotel(String name) {
+    public Hotel getHotelById(String hotelid) {
         PreparedStatement statement;
         Hotel hotel = null;
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
-            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_DATA);
+            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_BY_ID);
+            statement.setString(1, hotelid);
+
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                hotel = new Hotel(results.getString(1), // hotelid
+                        results.getString(2),   // name
+                        results.getString(3),   // street
+                        results.getString(4),   // city
+                        results.getString(5),   // state
+                        results.getString(6),   // lat
+                        results.getString(7));  // long
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return hotel;
+    }
+
+    /**
+     * Retrieves hotel data from sql database using hotel name
+     * @param name hotel name
+     * @return Hotel object
+     */
+    public Hotel getHotelByName(String name) {
+        PreparedStatement statement;
+        Hotel hotel = null;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_BY_NAME);
             statement.setString(1, name);
 
             ResultSet results = statement.executeQuery();
@@ -450,6 +526,28 @@ public class HotelDB {
             System.out.println(e);
         }
         return review;
+    }
+
+    public List<LinkEvent> getLinkEvents(String username) {
+        PreparedStatement statement;
+        List<LinkEvent> linkEvents = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_USER_LINKS);
+            statement.setString(1, username);
+
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                LinkEvent linkEvent = new LinkEvent(results.getString("name"),
+                        results.getString("expedia_link"),
+                        results.getString("latest_event_date"));
+                linkEvents.add(linkEvent);
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return linkEvents;
     }
 
     /**

@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>$hotelName</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    #parse("static/templates/navbar.html")
-
+    #parse("static/navbar.html")
     <div class="container-fluid text-center">
         <div class="row">
             <div class="col-sm-2 sidenav"></div>
@@ -27,8 +26,9 @@
                         <p>Average Rating: N/A</p>
                         #end
 
-                        #set ($url = $hotel.getCity() + "-Hotels-" + $hotel.getName() + ".h" + $hotel.getHotelid() + ".Hotel-Information")
-                        <p><a href="https://www.expedia.com/$url" target="_blank" rel="noopener noreferrer">See on Expedia</a></p>
+                        <!-- redirect to add-link helper servlet -->
+                        <p><a href="/link-helper?hotelid=$hotel.getHotelid()" target="_blank"
+                              rel="noopener noreferrer">See on Expedia</a></p>
                         <p>$reviewList.size() reviews</p>
                     </div><br>
 
@@ -43,17 +43,12 @@
                             <button type="submit" class="btn btn-outline-danger me-3">Back</button>
                         </form>
 
-                        #if ($username)
                         <form method="get" action="/add-review">
                             <input type="hidden" name="hotelSearch" value="$hotelSearch">
                             <input type="hidden" name="hotelName" value="$hotelName">
                             <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
                             <button type="submit" class="btn btn-outline-secondary">Add Review</button>
                         </form>
-                        #else
-                        <button type="submit" class="btn btn-outline-secondary"
-                                data-bs-toggle="modal" data-bs-target="#login">Add Review</button>
-                        #end
                     </div><br>
 
                     #if ($error == "dup")
@@ -62,17 +57,17 @@
 
                     <div class="text-start">
                     #foreach ($review in $reviewList)<hr>
-                    <p><b>$review.getRating() stars ~</b> $review.getTitle()</p>
-                    <p><b>Written by:</b> $review.getUsername()</p>
-                    <p class="fw-light">$review.getSubmissionDate()</p>
-                    <p class="fw-light">$review.getText()</p><br>
+                        <p><b>$review.getRating() stars ~</b> $review.getTitle()</p>
+                        <p><b>Written by:</b> $review.getUsername()</p>
+                        <p class="fw-light">$review.getSubmissionDate()</p>
+                        <p class="fw-light">$review.getText()</p><br>
                         #if ($review.getUsername() == $username)
-                        <form method="get" action="/edit-review">
-                            <input type="hidden" name="hotelSearch" value="$hotelSearch">
-                            <input type="hidden" name="hotelName" value="$hotelName">
-                            <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
-                            <button type="submit" class="btn btn-outline-success smoll">Edit</button>
-                        </form>
+                            <form method="get" action="/edit-review">
+                                <input type="hidden" name="hotelSearch" value="$hotelSearch">
+                                <input type="hidden" name="hotelName" value="$hotelName">
+                                <input type="hidden" name="hotelid" value="$hotel.getHotelid()">
+                                <button type="submit" class="btn btn-outline-success smoll">Edit</button>
+                            </form>
                         #end
                     #end
                     </div>

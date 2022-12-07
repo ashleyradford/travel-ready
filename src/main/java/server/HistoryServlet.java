@@ -1,9 +1,7 @@
 package server;
 
-import hotelapp.Hotel;
 import hotelapp.HotelDB;
-import hotelapp.Review;
-import org.apache.commons.text.StringEscapeUtils;
+import hotelapp.LinkEvent;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,7 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
-public class InfoServlet extends HttpServlet {
+public class HistoryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -35,33 +33,17 @@ public class InfoServlet extends HttpServlet {
         // redirect if not logged in
         if (username == null) response.sendRedirect("/home");
 
-        // grab and clean parameters
-        String hotelSearch = request.getParameter("hotelSearch");
-        hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
-        String hotelName = request.getParameter("hotelName");
-        hotelName = StringEscapeUtils.escapeHtml4(hotelName);
-        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&");
-        String error = request.getParameter("error");
-        error = StringEscapeUtils.escapeHtml4(error);
-
-        // grab hotel data for template
+        // get links and add to a list
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
-        Hotel hotel = hotelDB.getHotelByName(hotelName);
-        String avgRating = hotelDB.getAvgRating(hotelName);
-        List<Review> reviewList = hotelDB.getHotelReviews(hotelName);
+        List<LinkEvent> linkEventList = hotelDB.getLinkEvents(username);
 
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("static/info.html");
+        Template template = ve.getTemplate("static/history.html");
         context.put("username", username);
-        context.put("hotelSearch", hotelSearch);
-        context.put("hotelName", hotelName);
-        context.put("hotel", hotel);
-        context.put("avgRating", avgRating);
-        context.put("reviewList", reviewList);
-        context.put("error", error);
+        context.put("linkEvents", linkEventList);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);

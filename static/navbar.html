@@ -9,20 +9,21 @@
                 <li class="nav-item">
                     <a class="nav-link fw-light" href="#">Favorites</a>
                 </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link fw-light" href="#">Reviews</a>-->
+<!--                </li>-->
                 <li class="nav-item">
-                    <a class="nav-link fw-light" href="#">Reviews</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-light" href="#">History</a>
+                    <a class="nav-link fw-light" href="/history">History</a>
                 </li>
             </ul>
 
             <ul class="navbar-nav navbar-right">
                 <li class="nav-item">
-                    <a type="button" class="btn btn-dark smoll fw-light" href="/login?session=end">Logout</a>
+                    <a type="button" class="btn btn-dark smoll fw-light" href="/login?status=end">Logout</a>
                 </li>
             </ul>
-        #else <!-- user needs to log in first -->
+
+        #else <!-- user is not logged in -->
             <ul class="navbar-nav">
                 <a class="navbar-brand fw-light">Travel Ready</a>
                 <li class="nav-item">
@@ -31,9 +32,9 @@
                 <li class="nav-item">
                     <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">Favorites</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">Reviews</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">Reviews</a>-->
+<!--                </li>-->
                 <li class="nav-item">
                     <a class="nav-link fw-light" data-bs-toggle="modal" data-bs-target="#login" href="#">History</a>
                 </li>

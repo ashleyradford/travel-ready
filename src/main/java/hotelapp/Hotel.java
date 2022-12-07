@@ -58,4 +58,14 @@ public class Hotel {
     public String getLongitude() {
         return longitude;
     }
+
+    /**
+     * Generates the hotel's expedia url for redirection
+     * @return expedia url
+     */
+    public String generateExpediaUrl() {
+        return "https://www.expedia.com/" + city.replaceAll(" ", "-")
+                + "-Hotels-" + name.replaceAll("[^a-zA-Z\\s]", "").replaceAll("\\s+", "-")
+                + ".h" + hotelid + ".Hotel-Information";
+    }
 }

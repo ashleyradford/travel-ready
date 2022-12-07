@@ -29,7 +29,8 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        String status = request.getParameter("session");
+        // clear session and redirect if user is logging out
+        String status = request.getParameter("status");
         status = StringEscapeUtils.escapeHtml4(status);
         if (status != null && status.equals("end")) {
             username = null;
@@ -37,19 +38,18 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("/home");
         }
 
-        // user must log out first before they can log in again
-        if (username != null)
-            response.sendRedirect("/home");
+        // redirect if user is already logged in
+        if (username != null) response.sendRedirect("/home");
 
-        // check if user was redirected here because of failed authentication
-        String auth = request.getParameter("auth");
+        // grab and clean parameters
+        String auth = request.getParameter("auth"); // failed authentication
         auth = StringEscapeUtils.escapeHtml4(auth);
 
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("static/templates/login.html");
+        Template template = ve.getTemplate("static/login.html");
         context.put("auth", auth);
 
         StringWriter writer = new StringWriter();
@@ -61,18 +61,19 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-
-        response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
+        // grab and clean parameters
         String username = request.getParameter("name");
         username = StringEscapeUtils.escapeHtml4(username);
         String password = request.getParameter("pass");
         password = StringEscapeUtils.escapeHtml4(password);
 
+        // authenticate username and password
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         if (hotelDB.authenticateUser(username, password)) {
+            // set session username
+            HttpSession session = request.getSession();
             session.setAttribute("username", username);
             response.sendRedirect("/home");
         } else {

@@ -31,37 +31,38 @@ public class AddReviewServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        // for back button
+        // redirect if not logged in
+        if (username == null) response.sendRedirect("/home");
+
+        // grab and clean parameters
         String hotelSearch = request.getParameter("hotelSearch");
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
         if (hotelSearch == null) hotelSearch = "";
-
-        // grab error, hotel name and hotel id
-        String error = request.getParameter("error");
-        error = StringEscapeUtils.escapeHtml4(error);
-        String hotelid = request.getParameter("hotelid");
-        hotelid = StringEscapeUtils.escapeHtml4(hotelid);
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
-        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&"); // TODO better fix?
+        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&");
+        String hotelid = request.getParameter("hotelid");
+        hotelid = StringEscapeUtils.escapeHtml4(hotelid);
+        String error = request.getParameter("error");
+        error = StringEscapeUtils.escapeHtml4(error);
 
-        // first check if user already submitted review to hotel
+        // redirect if user already submitted review to hotel
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         if (hotelDB.getUserReview(hotelid, username) != null) {
-            if (hotelName != null) hotelName = hotelName.replaceAll("&", "%26"); // TODO better fix?
-            response.sendRedirect("/info?error=dup&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
+            if (hotelName != null) hotelName = hotelName.replaceAll("&", "%26");
+            response.sendRedirect("/info?hotelSearch=" + hotelSearch + "&hotelName=" + hotelName + "&error=dup");
         }
 
-        // set up velocity template
+        // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("static/templates/add-review.html");
-        context.put("error", error);
-        context.put("hotelSearch", hotelSearch);
-        context.put("hotelid", hotelid);
-        context.put("hotelName", hotelName);
+        Template template = ve.getTemplate("static/add-review.html");
         context.put("username", username);
+        context.put("hotelSearch", hotelSearch);
+        context.put("hotelName", hotelName);
+        context.put("hotelid", hotelid);
+        context.put("error", error);
 
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
@@ -72,19 +73,21 @@ public class AddReviewServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
         // grab session data
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
+        // redirect if not logged in
+        if (username == null) response.sendRedirect("/home");
+
         // get and clean parameters
         String hotelSearch = request.getParameter("hotelSearch");
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
-        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "%26"); // TODO better fix?
+        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "%26");
         String hotelid = request.getParameter("hotelid");
         hotelid = StringEscapeUtils.escapeHtml4(hotelid);
         String rating = request.getParameter("rating");
@@ -94,7 +97,7 @@ public class AddReviewServlet extends HttpServlet {
         String text = request.getParameter("review-text");
         text = StringEscapeUtils.escapeHtml4(text);
 
-        // generate UUID review id and date time
+        // generate review UUID and date time
         UUID reviewUUID = UUID.randomUUID();
         String reviewid = reviewUUID.toString().replaceAll("-", "");
         LocalDateTime submissionDate = LocalDateTime.now();
@@ -103,9 +106,9 @@ public class AddReviewServlet extends HttpServlet {
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         if (hotelDB.addReview(reviewid, hotelid, username, rating, title, text, submissionDate.toString())) {
             response.sendRedirect("/info?hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
-        } else {
-            // review was not successfully added
-            response.sendRedirect("/add-review?error=failed&hotelSearch=" + hotelSearch + "&hotelName=" + hotelName);
+        } else { // review was not successfully added
+            response.sendRedirect("/add-review?hotelSearch=" + hotelSearch + "&hotelName="
+                    + hotelName + "&hotelid=" + hotelid + "&error=failed");
         }
     }
 }

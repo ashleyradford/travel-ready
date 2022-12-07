@@ -30,21 +30,23 @@ public class HomeServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        // hotel search if applicable
+        // grab and clean parameters
         String hotelSearch = request.getParameter("hotelSearch");
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
-        if (hotelSearch == null)
-            hotelSearch = "";
+        if (hotelSearch == null) hotelSearch = "";
 
-        // need to perform the search
-        HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
-        List<String> matchedHotels = hotelDB.findHotels(hotelSearch);
+        // perform the hotel search if user is logged in
+        List<String> matchedHotels = null;
+        if (username != null) {
+            HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
+            matchedHotels = hotelDB.findHotelNames(hotelSearch);
+        }
 
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("static/templates/home.html");
+        Template template = ve.getTemplate("static/home.html");
         context.put("username", username);
         context.put("hotelSearch", hotelSearch);
         context.put("matchedHotels", matchedHotels);

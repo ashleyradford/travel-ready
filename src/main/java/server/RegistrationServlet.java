@@ -29,19 +29,18 @@ public class RegistrationServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
 
-        // user must log out first before they can log in again
-        if (username != null)
-            response.sendRedirect("/home");
+        // redirect if user is already logged in
+        if (username != null) response.sendRedirect("/home");
 
-        // check if user was redirected here because of an error
+        // grab and clean parameters
         String error = request.getParameter("error");
         error = StringEscapeUtils.escapeHtml4(error);
 
-        // set up velocity template
+        // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
         VelocityContext context = new VelocityContext();
 
-        Template template = ve.getTemplate("static/templates/registration.html");
+        Template template = ve.getTemplate("static/registration.html");
         context.put("error", error);
 
         StringWriter writer = new StringWriter();
@@ -53,9 +52,9 @@ public class RegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
+        // grab and clean parameters
         String username = request.getParameter("name");
         username = StringEscapeUtils.escapeHtml4(username);
         String password = request.getParameter("pass");

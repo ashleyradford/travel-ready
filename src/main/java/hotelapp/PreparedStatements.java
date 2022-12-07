@@ -36,6 +36,15 @@ public class PreparedStatements {
                     "submission_date DATETIME NOT NULL," +
                     "UNIQUE KEY hotel_user (hotelid, username));";
 
+    // creates travel_history table
+    public static final String CREATE_HISTORY_TABLE =
+            "CREATE TABLE IF NOT EXISTS travel_history (" +
+                    "eventid VARCHAR(32) PRIMARY KEY, " +
+                    "expedia_link VARCHAR(600) NOT NULL, " +
+                    "username VARCHAR(32) NOT NULL, " +
+                    "hotelid INTEGER NOT NULL, " +
+                    "event_date DATETIME NOT NULL);";
+
     // inserts user to travel_users table
     public static final String INSERT_USER =
             "INSERT INTO travel_users (username, password, usersalt) " +
@@ -67,6 +76,15 @@ public class PreparedStatements {
     public static final String DELETE_REVIEW =
             "DELETE from travel_reviews WHERE hotelid = ? AND username = ?";
 
+    // inserts a new expedia link event in travel_history table
+    public static final String INSERT_LINK_EVENT =
+            "INSERT INTO travel_history (eventid, expedia_link, username, hotelid, event_date) " +
+                    "VALUES (?, ?, ?, ?, ?);";
+
+    // clear the expedia links
+    public static final String CLEAR_HISTORY =
+            "DELETE FROM travel_history WHERE username = ?";
+
     /** ------------------------------------ SQL QUERIES ------------------------------------ */
 
     // selects username from travel_users (for actual registration)
@@ -82,11 +100,16 @@ public class PreparedStatements {
             "SELECT usersalt FROM travel_users WHERE username = ?";
 
     // selects hotel name from travel_hotel using regex
-    public static final String SELECT_HOTEL =
+    public static final String SELECT_HOTEL_NAME =
             "SELECT name FROM travel_hotels WHERE name LIKE ?";
 
     // selects hotel data for a given hotel name
-    public static final String SELECT_HOTEL_DATA =
+    public static final String SELECT_HOTEL_BY_ID =
+            "SELECT hotelid, name, street, city, state, latitude, longitude " +
+                    "FROM travel_hotels WHERE hotelid = ?";
+
+    // selects hotel data for a given hotel name
+    public static final String SELECT_HOTEL_BY_NAME =
             "SELECT hotelid, name, street, city, state, latitude, longitude " +
                     "FROM travel_hotels WHERE name = ?";
 
@@ -114,4 +137,13 @@ public class PreparedStatements {
     public static final String SELECT_USER_REVIEW =
             "SELECT reviewid, hotelid, username, rating, title, text, submission_date " +
                     "FROM travel_reviews WHERE hotelid = ? AND username = ?";
+
+    public static final String SELECT_USER_LINKS =
+            "SELECT travel_hotels.name, travel_history.expedia_link, " +
+                    "MAX(travel_history.event_date) AS latest_event_date " +
+                    "FROM travel_history " +
+                    "LEFT JOIN travel_hotels ON travel_hotels.hotelid = travel_history.hotelid " +
+                    "WHERE travel_history.username = ? " +
+                    "GROUP BY travel_history.username, travel_history.expedia_link " +
+                    "ORDER BY latest_event_date DESC;";
 }

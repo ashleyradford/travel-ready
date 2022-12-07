@@ -92,6 +92,7 @@ public class HotelServer {
         hotelDB.createTable("travel_users");
         hotelDB.createTable("travel_hotels");
         hotelDB.createTable("travel_reviews");
+        hotelDB.createTable("travel_history");
 
         // load hotel data if specified
         if (argParser.getArgValue("-hotels") != null) {
@@ -113,6 +114,8 @@ public class HotelServer {
         hotelServer.addServletMapping("/info", InfoServlet.class.getName());
         hotelServer.addServletMapping("/add-review", AddReviewServlet.class.getName());
         hotelServer.addServletMapping("/edit-review", EditReviewServlet.class.getName());
+        hotelServer.addServletMapping("/history", HistoryServlet.class.getName());
+        hotelServer.addServletMapping("/link-helper", LinkHelperServlet.class.getName());
 
         // start jetty server
         try {
