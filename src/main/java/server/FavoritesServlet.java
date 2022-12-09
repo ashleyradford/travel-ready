@@ -34,7 +34,7 @@ public class FavoritesServlet extends HttpServlet {
         // redirect if not logged in
         if (username == null) response.sendRedirect("/home");
 
-        // get links and add to a list
+        // get links from database and add to a list
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         List<FavEvent> favEvents = hotelDB.getFavEvents(username);
 

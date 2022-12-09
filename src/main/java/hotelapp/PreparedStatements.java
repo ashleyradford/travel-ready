@@ -186,6 +186,10 @@ public class PreparedStatements {
     public static final String SELECT_LAST_LOGIN =
             "SELECT last_login FROM travel_users WHERE username = ?;";
 
+    // selects the latitude and longitude for a given hotelid
+    public static final String SELECT_LAT_LONG =
+            "SELECT latitude, longitude FROM travel_hotels WHERE hotelid = ?;";
+
     // selects hotelid if hotel is favorited by user
     public static final String SELECT_FAV_HOTEL =
             "SELECT hotelid FROM travel_favorites WHERE username = ? AND hotelid = ?;";

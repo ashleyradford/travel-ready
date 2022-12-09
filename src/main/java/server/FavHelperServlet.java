@@ -22,7 +22,6 @@ public class FavHelperServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
-        JsonObject favObj = new JsonObject();
 
         // grab session data
         HttpSession session = request.getSession();
@@ -44,7 +43,8 @@ public class FavHelperServlet extends HttpServlet {
             return;
         }
 
-        // delete or add favorite
+        // update fav value and delete or add favorite hotel
+        JsonObject favObj = new JsonObject();
         boolean isFav = hotelDB.checkFavorite(username, hotelid);
         if (isFav) {
             hotelDB.deleteUserFavorite(username, hotelid);

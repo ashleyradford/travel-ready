@@ -119,6 +119,7 @@ public class HotelServer {
         hotelServer.addServletMapping("/link-helper", LinkHelperServlet.class.getName());
         hotelServer.addServletMapping("/favorites", FavoritesServlet.class.getName());
         hotelServer.addServletMapping("/fav-helper", FavHelperServlet.class.getName());
+        hotelServer.addServletMapping("/weather", WeatherServlet.class.getName());
 
         // start jetty server
         try {

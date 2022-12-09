@@ -678,6 +678,25 @@ public class HotelDB {
         return null;
     }
 
+
+    public String[] getLatLong(String hotelid) {
+        PreparedStatement statement;
+        String[] latlong = new String[2];
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_LAT_LONG);
+            statement.setString(1, hotelid);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                latlong[0] = results.getString("latitude");
+                latlong[1] = results.getString("longitude");
+                return latlong;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
     /**
      * Checks if hotel is favorited by a given user
      * @param username username
