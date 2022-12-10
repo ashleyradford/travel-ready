@@ -6,7 +6,7 @@ async function getReviews(username, hotelSearch, hotelid, offset) {
     let beg = "<div class=\"text-start\">";
     let info = "";
     for (let i = 0; i < jsonArr.length; i++) {
-        info = info + "<p><b>" + jsonArr[i].rating + " stars ~</b> " + jsonArr[i].title + "</p>"
+        info = info + "<hr><p><b>" + jsonArr[i].rating + " stars ~</b> " + jsonArr[i].title + "</p>"
         + "<p><b>Written by:</b> " + jsonArr[i].username + "</p>"
         + "<p class=\"fw-light\">" + jsonArr[i].submissionDate + "</p>"
         + "<p class=\"fw-light\">" + jsonArr[i].text + "</p><br>"
@@ -17,7 +17,7 @@ async function getReviews(username, hotelSearch, hotelid, offset) {
                             + "<button type=\"submit\" class=\"btn btn-outline-success smoll\">Edit</button>"
                             + "</form>";
         }
-        info = info + "<hr>";
+        info = info;
     }
 
     let str = beg + info;
