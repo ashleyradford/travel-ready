@@ -20,6 +20,8 @@ import java.util.List;
 
 public class InfoServlet extends HttpServlet {
 
+    private final int LIMIT = 5;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,16 +44,30 @@ public class InfoServlet extends HttpServlet {
         String hotelName = request.getParameter("hotelName");
         hotelName = StringEscapeUtils.escapeHtml4(hotelName);
         if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&");
+        String page = StringEscapeUtils.escapeHtml4(request.getParameter("page"));
         String error = request.getParameter("error");
         error = StringEscapeUtils.escapeHtml4(error);
 
         // grab hotel data for template
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         Hotel hotel = hotelDB.getHotelByName(hotelName);
+
+        // figure out the page count
+        int reviewCount = hotelDB.getReviewCount(hotel.getHotelid());
+        int pageCount = reviewCount % LIMIT == 0 ? reviewCount / LIMIT : reviewCount / LIMIT + 1;
+        if (pageCount == 0) pageCount = 1;
+
+        // now set the limit and offset
+        int offset = page == null ? 1 : Integer.parseInt(page);
+        if (offset > pageCount)
+            offset = pageCount;
+        else if (offset <= 0)
+            offset = 1;
+
         // set favorite if hotel is favorited
         if (hotelDB.checkFavorite(username, hotel.getHotelid())) hotel.setFavorite();
         String avgRating = hotelDB.getAvgRating(hotelName);
-        List<Review> reviewList = hotelDB.getHotelReviews(hotelName);
+        List<Review> reviewList = hotelDB.getHotelReviews(hotelName, LIMIT, (offset - 1) * LIMIT);
 
         // set up velocity template and its context
         VelocityEngine ve = (VelocityEngine) request.getServletContext().getAttribute("templateEngine");
@@ -64,6 +80,9 @@ public class InfoServlet extends HttpServlet {
         context.put("hotel", hotel);
         context.put("avgRating", avgRating);
         context.put("reviewList", reviewList);
+        context.put("reviewCount", reviewCount);
+        context.put("pageCount", pageCount);
+        context.put("offset", offset);
         context.put("error", error);
 
         StringWriter writer = new StringWriter();

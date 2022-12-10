@@ -147,6 +147,12 @@ public class PreparedStatements {
                     "GROUP BY travel_hotels.name " +
                     "HAVING name = ?;";
 
+    // selects count of reviews for a given hotel name
+    public static final String SELECT_REVIEW_COUNT =
+            "SELECT COUNT(*) AS review_count FROM travel_reviews " +
+                    "WHERE travel_reviews.hotelid = ? " +
+                    "GROUP BY travel_reviews.hotelid;";
+
     // selects all review data for a given hotel name
     public static final String SELECT_HOTEL_REVIEWS =
             "SELECT travel_reviews.reviewid, travel_reviews.hotelid, travel_reviews.username, " +
@@ -193,4 +199,16 @@ public class PreparedStatements {
     // selects hotelid if hotel is favorited by user
     public static final String SELECT_FAV_HOTEL =
             "SELECT hotelid FROM travel_favorites WHERE username = ? AND hotelid = ?;";
+
+    // selects the subset of reviews for pagination
+    public static final String SELECT_PAGE_REVIEWS =
+            "SELECT travel_reviews.reviewid, travel_reviews.hotelid, travel_reviews.username, " +
+                    "travel_reviews.rating, travel_reviews.title, travel_reviews.text, " +
+                    "travel_reviews.submission_date " +
+                    "FROM travel_hotels " +
+                    "LEFT JOIN travel_reviews " +
+                    "ON travel_reviews.hotelid = travel_hotels.hotelid " +
+                    "WHERE travel_hotels.name = ? " +
+                    "ORDER BY travel_reviews.submission_date DESC " +
+                    "LIMIT ? OFFSET ?";
 }

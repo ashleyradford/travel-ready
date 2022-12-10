@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class WeatherServlet extends HttpServlet {
 
@@ -32,13 +34,16 @@ public class WeatherServlet extends HttpServlet {
 
         // fetch weather data for response
         WeatherFetcher weatherFetcher = new WeatherFetcher();
-        JsonObject meteoObj  = weatherFetcher.getWeather(latlong[0], latlong[1]);
-
+        JsonObject meteoObj = weatherFetcher.getWeather(latlong[0], latlong[1]);
         String temp = celsiusToFahrenheit(meteoObj.get("temperature").getAsString());
         String wind = meteoObj.get("windspeed").getAsString();
         String desc = describeWeatherCode(meteoObj.get("weathercode").getAsString());
 
+        // create time formatter
+        DateTimeFormatter pretty = DateTimeFormatter.ofPattern("hh:mm:ss");
+
         JsonObject weatherObj = new JsonObject();
+        weatherObj.addProperty("time", pretty.format(LocalDateTime.now()));
         weatherObj.addProperty("temp", temp);
         weatherObj.addProperty("wind", wind);
         weatherObj.addProperty("desc", desc);

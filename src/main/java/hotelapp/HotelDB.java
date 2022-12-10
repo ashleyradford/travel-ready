@@ -548,14 +548,18 @@ public class HotelDB {
     /**
      * Retrieves a list of reviews for a given hotel name
      * @param name hotel name
+     * @param limit limit
+     * @param offset offset
      * @return list of Review objects
      */
-    public List<Review> getHotelReviews(String name) {
+    public List<Review> getHotelReviews(String name, int limit, int offset) {
         PreparedStatement statement;
         List<Review> reviews = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
-            statement = connection.prepareStatement(PreparedStatements.SELECT_HOTEL_REVIEWS);
+            statement = connection.prepareStatement(PreparedStatements.SELECT_PAGE_REVIEWS);
             statement.setString(1, name);
+            statement.setInt(2, limit);
+            statement.setInt(3, offset);
 
             ResultSet results = statement.executeQuery();
             // will still return a non-empty set if we are looking for a valid hotel,
@@ -678,7 +682,11 @@ public class HotelDB {
         return null;
     }
 
-
+    /**
+     * Gets the latitude and longitude of a given hotel
+     * @param hotelid hotel id
+     * @return return a length 2 array of lat and long
+     */
     public String[] getLatLong(String hotelid) {
         PreparedStatement statement;
         String[] latlong = new String[2];
@@ -695,6 +703,27 @@ public class HotelDB {
             System.out.println(e);
         }
         return null;
+    }
+
+    /**
+     * Gets the count of reviews for a given hotel id
+     * @param hotelid hotel id
+     * @return return count of reviews
+     */
+    public int getReviewCount(String hotelid) {
+        PreparedStatement statement;
+        int count = 0;
+        try (Connection connection = DriverManager.getConnection(uri, config.getProperty("username"), config.getProperty("password"))) {
+            statement = connection.prepareStatement(PreparedStatements.SELECT_REVIEW_COUNT);
+            statement.setString(1, hotelid);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                count = Integer.parseInt(results.getString("review_count"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return count;
     }
 
     /**

@@ -42,16 +42,16 @@
                         <!-- redirect to add-link helper servlet -->
                         <p><a href="/link-helper?hotelid=$hotel.getHotelid()" target="_blank"
                               rel="noopener noreferrer">See on Expedia</a></p>
-                        <p>$reviewList.size() reviews</p>
+                        <p>$reviewCount reviews</p>
                     </div><br>
 
                     <!-- ajax weather check -->
-                    <p id="weather"></p>
+                    <p id="weather" class="fw-light"></p>
                     <p><button type="button"
-                               class="btn btn-outline-info me-3"
+                               class="btn btn-outline-info me-3 shadow-none"
                                onclick="checkWeather($hotel.getHotelid())">
-                        Check current weather
-                    </button></p>
+                        Update
+                    </button></p><br>
 
                     <!-- checking if there are reviews -->
                     #if ($reviewList.size() == 0)
@@ -95,6 +95,46 @@
                     #end
                     </div>
                 </div>
+
+                <!-- pagination -->
+                <ul class="pagination justify-content-center">
+                    #set( $hotelNameParsed = $hotelName.replace("&", "%26") )
+                    #if ($reviewCount > 0)
+                        #if ($offset == 1)
+                        <li class="page-item disabled">
+                            <a class="page-link shadow-none" href="">&laquo;</a>
+                        </li>
+                        #else
+                        #set ($page = $offset - 1)
+                        <li class="page-item">
+                            <a class="page-link shadow-none"
+                               href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed&page=$page">&laquo;</a>
+                        </li>
+                        #end
+                        #foreach ($i in [1..$pageCount])
+                            #if ($i == $offset)
+                            <li class="page-item active">
+                                <a class="page-link shadow-none"
+                                   href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed&page=$i">$i</a></li>
+                            #else
+                            <li class="page-item">
+                                <a class="page-link shadow-none"
+                                   href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed&page=$i">$i</a></li>
+                            #end
+                        #end
+                        #if ($offset == $pageCount)
+                        <li class="page-item disabled">
+                            <a class="page-link shadow-none" href="">&raquo;</a>
+                        </li>
+                        #else
+                        #set ($page = $offset + 1)
+                        <li class="page-item">
+                            <a class="page-link shadow-none"
+                               href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed&page=$page">&raquo;</a>
+                        </li>
+                        #end
+                    #end
+                </ul>
             </div>
             <div class="col-sm-2 sidenav"></div>
         </div>
