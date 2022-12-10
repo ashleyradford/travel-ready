@@ -28,7 +28,10 @@
                     <tbody>
                         #foreach ($link in $linkEvents)
                         <tr>
-                            <td class="fw-light">$link.getHotelName()</td>
+                            #set( $hotelNameParsed = $link.getHotelName().replace("&", "%26") )
+                            <td class="fw-light"><a href="/info?hotelName=$hotelNameParsed"
+                                                    style="color: black"
+                                                    class="results fw-light">$link.getHotelName()</a></td>
                             <td class="fw-light"><a href="/link-helper?hotelid=$link.getHotelid()" target="_blank"
                                                     rel="noopener noreferrer">Visit on Expedia</a></td>
                             <td class="fw-light">$link.getVisitCount()</td>

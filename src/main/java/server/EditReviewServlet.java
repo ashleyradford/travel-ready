@@ -1,5 +1,6 @@
 package server;
 
+import hotelapp.Hotel;
 import hotelapp.HotelDB;
 import hotelapp.Review;
 import org.apache.commons.text.StringEscapeUtils;
@@ -37,9 +38,6 @@ public class EditReviewServlet extends HttpServlet {
         // grab and clean parameters
         String hotelSearch = request.getParameter("hotelSearch");
         hotelSearch = StringEscapeUtils.escapeHtml4(hotelSearch);
-        String hotelName = request.getParameter("hotelName");
-        hotelName = StringEscapeUtils.escapeHtml4(hotelName);
-        if (hotelName != null) hotelName = hotelName.replaceAll("&amp;", "&");
         String hotelid = request.getParameter("hotelid");
         hotelid = StringEscapeUtils.escapeHtml4(hotelid);
         String error = request.getParameter("error");
@@ -48,6 +46,8 @@ public class EditReviewServlet extends HttpServlet {
         // grab the user's review for hotelid
         HotelDB hotelDB = (HotelDB) getServletContext().getAttribute("hotelDB");
         Review review = hotelDB.getUserReview(hotelid, username);
+        Hotel hotel = hotelDB.getHotelById(hotelid);
+        String hotelName = hotel.getName();
 
         // get review data only if original author
         String editRating = null;
@@ -119,14 +119,14 @@ public class EditReviewServlet extends HttpServlet {
         if (modify.equals("edit")) {
             if (!hotelDB.updateUserReview(hotelid, username, editRating, editTitle, editText, editDate.toString())) {
                 // review was not successfully updated
-                response.sendRedirect("/edit-review?hotelSearch=" + hotelSearch + "&hotelName="
-                        + hotelName + "&hotelid=" + hotelid + "&error=failedUpdate");
+                response.sendRedirect("/edit-review?hotelSearch=" + hotelSearch +
+                        "&hotelid=" + hotelid + "&error=failedUpdate");
             }
         } else if (modify.equals("delete")) {
             if (!hotelDB.deleteUserReview(hotelid, username)) {
                 // review was not successfully deleted
-                response.sendRedirect("/edit-review?hotelSearch=" + hotelSearch + "&hotelName="
-                        + hotelName + "&hotelid=" + hotelid + "&error=failedDelete");
+                response.sendRedirect("/edit-review?hotelSearch=" + hotelSearch +
+                        "&hotelid=" + hotelid + "&error=failedDelete");
             }
         }
 
