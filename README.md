@@ -1,15 +1,22 @@
-# Final Project
-The goal of the final project is to implement a website with a subset of the functionality of tripadvisor (or oyster.com, hotels.com), where users can register, login, search for hotels, read reviews written by other people, write and edit their own reviews, etc. Note that this website will not allow the user to check availability or book hotels.
+# Travel Ready
+A hotel advisor application that hosts imported hotel data, user reviews, favorites, and more for securely logged in user accounts.
 
-## General Requirements (for both parts of the project)
+## Run
+Make sure that the MySQL database specified in `database.properties` is up and running.<br>
+Run `HotelServer.main()` class.
 
-- You are required to implement both the front end and the back end. 
-- 	Your code should be in Java (plus some Javascript for the front end as needed).
-- You may reuse code from your labs; just keep in mind that you will most likely need to modify it for the project. You may also use code from the examples I showed in class, but you need to understand every line of code in your project and be explain to explain it (saying "I am not sure how it works, I just copied it from the example" will result in a 0 for the project).
-- You are required to use Jetty/servlets for this project. 
-- You may either use the departmental MySql database assigned to you (see MySqlAccounts.pdf under Schedule), or use a locally installed MySql database.
-- By default, you may not use any libraries except for the ones we used for labs. You are not allowed to use DataTables jQuery plugin or similar plugins. If you would like to use a particular library or tool, please make sure to get the instructor's approval first.  
-- For the final release of the project, your web pages should look professional and have a clean look. Using Twitter Bootstrap is highly recommended. For the first part of the project, it is acceptable to have a very simple front end.
-- During the interactive code review, it is the student's responsibility to demonstrate to the instructor that each feature works properly. You may not receive credit for the features you don't demonstrate at that time. Please practice showing a demo beforehand and come prepared. Make sure to show how your features handle error cases (e.g., login of a user that does not exist).  
+**Key hotel features include:**
+- User Registration: users may register with unique usernames
+- Password Strength: user passwords must satisfy a set of requirements (not too short or long, contains at least one lowercase letter, one uppercase letter, one special character, and a digit character). 
+- Login and Logout: user maintained sessions
+- Hotel Search: logged in users may search for a hotel by name
+- Hotel Information: hotel pages that include hotel name and id, address, average rating, a link to that hotel's expedia page, and list of reviews
+- Weather: weather data is fetched from meteo and displayed on each hotel's info page
+- Add Review: logged in users may add up to one review per hotel (to prevent review bombing)
+- Modify Review: logged in users may edit their own reviews
+- Favorites: user may favorite hotels and view a list of their favorites
+- Expedia History: users may check which hotels they visit through Expedia
+- Last Login: users may check their latest login times
 
-For the list of required features for milestone #1, please refer to the project description on the course webpage.
+### Ajax Features
+Review pagination, weather updates, and favorited hotels are updated via Ajax so that the sending and receiving of data from the database is done asynchronously and does not require a reload of the entire webpage.
