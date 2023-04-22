@@ -28,7 +28,7 @@
                     <tbody>
                         #foreach ($link in $linkEvents)
                         <tr>
-                            #set( $hotelNameParsed = $link.getHotelName().replace("&", "%26") )
+                            #set($hotelNameParsed = $link.getHotelName().replace("&", "%26"))
                             <td class="fw-light"><a href="/info?hotelName=$hotelNameParsed"
                                                     style="color: black"
                                                     class="results fw-light">$link.getHotelName()</a></td>

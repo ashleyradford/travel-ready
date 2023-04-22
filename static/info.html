@@ -86,7 +86,7 @@
 
                     <!-- pagination -->
                     <ul class="pagination justify-content-center">
-                        #set( $hotelNameParsed = $hotelName.replace("&", "%26") )
+                        #set($hotelNameParsed = $hotelName.replace("&", "%26"))
                         #if ($reviewCount > 0)
                             #foreach ($i in [1..$pageCount])
                                 <li class="page-item">

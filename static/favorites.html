@@ -28,7 +28,7 @@
                 #foreach ($favEvent in $favEvents)
                 <tr>
                     <td></td>
-                    #set( $hotelNameParsed = $favEvent.getHotelName().replace("&", "%26") )
+                    #set($hotelNameParsed = $favEvent.getHotelName().replace("&", "%26"))
                     <td class="fw-light"><a href="/info?hotelName=$hotelNameParsed"
                                             style="color: black"
                                             class="results fw-light">$favEvent.getHotelName()</a></td>

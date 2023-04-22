@@ -44,7 +44,7 @@
                             <!-- loop through the hotel results -->
                             <tbody>
                             #foreach ($hotelName in $matchedHotels)
-                            #set( $hotelNameParsed = $hotelName.replace("&", "%26") )
+                            #set($hotelNameParsed = $hotelName.replace("&", "%26"))
                             <tr>
                                 <td></td>
                                 <td><a href="/info?hotelSearch=$hotelSearch&hotelName=$hotelNameParsed"

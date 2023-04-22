@@ -2,7 +2,6 @@ package server;
 
 import hotelapp.FavEvent;
 import hotelapp.HotelDB;
-import hotelapp.LinkEvent;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
