@@ -1,6 +1,8 @@
 # Travel Ready
 A hotel advisor application that hosts imported hotel data, user reviews, favorites, and more for securely logged in user accounts.
 
+<img src="https://github.com/ashleyradford/travel-ready/blob/master/images/home-page.png" width=55% height=55%>
+
 ## Run
 Make sure that the MySQL database specified in `database.properties` is up and running.<br>
 Run `HotelServer.main()` class.
